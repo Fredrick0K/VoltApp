@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Windows Phone Dark Theme Colors -->
+    <color name="purple_200">#FF64B5F6</color>
+    <color name="purple_500">#FF1976D2</color>
+    <color name="purple_700">#FF1E1E1E</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    
+    <!-- Dark Theme Base -->
+    <color name="wp_background">#FF000000</color>
+    <color name="wp_surface">#FF1E1E1E</color>
+    <color name="wp_surface_elevated">#FF2D2D2D</color>
+    <color name="wp_text_primary">#FFFFFFFF</color>
+    <color name="wp_text_secondary">#FFB3B3B3</color>
+    <color name="wp_accent">#FF64B5F6</color>
+    <color name="wp_accent_dark">#FF1976D2</color>
+    
+    <!-- Price Colors -->
+    <color name="price_green">#FF4CAF50</color>
+    <color name="price_yellow">#FFFFC107</color>
+    <color name="price_red">#FFF44336</color>
+    <color name="price_green_bg">#FF1B3D1B</color>
+    <color name="price_yellow_bg">#FF3D3B1B</color>
+    <color name="price_red_bg">#FF3D1B1B</color>
+    
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

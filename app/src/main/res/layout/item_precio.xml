@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="1dp">
+
+    <!-- Barra de color lateral -->
+    <View
+        android:id="@+id/view_color_bar"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:background="#4CAF50"
+        android:layout_marginEnd="12dp"/>
+
+    <!-- Contenedor de información -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Hora -->
+            <TextView
+                android:id="@+id/tv_hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121"
+                android:layout_marginEnd="12dp"/>
+
+            <!-- Precio -->
+            <TextView
+                android:id="@+id/tv_precio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="100.00 €/MWh"
+                android:textSize="16sp"
+                android:textColor="#424242"/>
+
+        </LinearLayout>
+
+        <!-- Indicador de precio más alto/bajo -->
+        <TextView
+            android:id="@+id/tv_indicador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔴 MÁS CARO"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</LinearLayout>

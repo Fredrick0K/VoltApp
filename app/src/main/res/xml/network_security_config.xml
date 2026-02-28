@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Configuración estricta de seguridad de red -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Solo confiar en certificados del sistema -->
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+    
+    <!-- Configuración específica para la API de REE -->
+    <domain-config>
+        <domain includeSubdomains="true">apidatos.ree.es</domain>
+        <pin-set expiration="2025-12-31">
+            <!-- Pinning de certificado (opcional pero recomendado) -->
+            <!-- Estos son pins de ejemplo, en producción deberías obtener los reales -->
+        </pin-set>
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

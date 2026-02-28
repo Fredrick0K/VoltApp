@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Volt</string>
+    
+    <!-- Mensajes de la app -->
+    <string name="cargando">Cargando precios…</string>
+    <string name="error_conexion">Error de conexión. Verifica tu internet.</string>
+    <string name="sin_datos">No hay datos disponibles</string>
+    <string name="ubicacion_por_defecto">Madrid</string>
+    
+    <!-- Permisos -->
+    <string name="permiso_ubicacion_titulo">Ubicación necesaria</string>
+    <string name="permiso_ubicacion_mensaje">Para mostrar los precios de tu zona necesitamos acceso a tu ubicación.</string>
+    <string name="permiso_notificaciones_titulo">Notificaciones</string>
+    <string name="permiso_notificaciones_mensaje">Permite notificaciones para recibir avisos diarios de precios.</string>
+    
+    <!-- Notificaciones -->
+    <string name="notif_titulo">⚡ Precios de la Luz Hoy</string>
+    <string name="notif_canal_nombre">Precios Diarios</string>
+    <string name="notif_canal_descripcion">Notificaciones diarias con resumen de precios</string>
+    
+    <!-- Resumen -->
+    <string name="promedio">💰 Promedio: %.2f €/MWh</string>
+    <string name="mas_caro">🔴 Más caro: %s - %.2f€</string>
+    <string name="mas_barato">🟢 Más barato: %s - %.2f€</string>
+    
+    <!-- Niveles de precio -->
+    <string name="precio_bajo">Precio bajo</string>
+    <string name="precio_medio">Precio medio</string>
+    <string name="precio_alto">Precio alto</string>
+</resources>
