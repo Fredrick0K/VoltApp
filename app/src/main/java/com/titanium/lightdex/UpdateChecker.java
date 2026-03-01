@@ -84,7 +84,10 @@ public class UpdateChecker {
             JSONObject jsonResponse = new JSONObject(response.toString());
             String tagName = jsonResponse.getString("tag_name");
             
-            return tagName.startsWith("v") ? tagName.substring(1) : tagName;
+            tagName = tagName.startsWith("v") ? tagName.substring(1) : tagName;
+            tagName = tagName.split("-")[0];
+            
+            return tagName;
         } else {
             Log.w(TAG, "GitHub API returned: " + responseCode);
             return null;
