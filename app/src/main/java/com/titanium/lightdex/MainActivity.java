@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     
     private static final String TAG = "MainActivity";
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private static final String GITHUB_USER = "Fredrick0K";
+    private static final String REPO_NAME = "VoltApp";
     
     private RecyclerView recyclerHoras;
     private TextView tvUbicacion;
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         cargarPrecios();
         
         NotificationScheduler.programarNotificacionDiaria(this);
+        
+        checkForUpdates();
     }
     
     private void inicializarVistas() {
@@ -347,5 +351,10 @@ public class MainActivity extends AppCompatActivity {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
+    }
+    
+    private void checkForUpdates() {
+        UpdateChecker updateChecker = new UpdateChecker(this, GITHUB_USER, REPO_NAME);
+        updateChecker.checkForUpdate();
     }
 }

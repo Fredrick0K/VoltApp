@@ -28,4 +28,7 @@
     <string name="precio_bajo">Precio bajo</string>
     <string name="precio_medio">Precio medio</string>
     <string name="precio_alto">Precio alto</string>
+    <!--Boton Enviar Notificacion-->
+    <string name="enviar_noti">🔔</string>
+
 </resources>

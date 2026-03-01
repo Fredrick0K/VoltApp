@@ -271,14 +271,15 @@
         <!-- Botón de notificación -->
         <Button
             android:id="@+id/btn_notificacion"
-            android:layout_width="56dp"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="75dp"
             android:layout_height="56dp"
             android:layout_gravity="center"
             android:layout_marginBottom="24dp"
-            android:text="🔔"
-            android:textSize="24sp"
-            android:background="@drawable/bg_boton_redondo"
-            android:backgroundTint="@color/wp_accent"/>
+            android:background="@drawable/bg_lupa"
+            android:backgroundTint="@color/teal_700"
+            android:text="@string/enviar_noti"
+            android:textSize="24sp" />
 
     </LinearLayout>
 </ScrollView>
