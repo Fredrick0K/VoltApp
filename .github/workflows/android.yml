@@ -32,19 +32,16 @@ jobs:
       - name: Build debug APK
         run: bash ./gradlew assembleDebug
 
-      - name: Upload debug APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: volt-debug
+          name: Volt
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Upload release APK
+      - name: Upload to Release
         if: github.event_name == 'release'
-        run: bash ./gradlew assembleRelease
-
-      - name: Upload release APK artifact
-        if: github.event_name == 'release'
-        uses: actions/upload-artifact@v4
+        uses: softprops/action-gh-release@v1
         with:
-          name: volt-release
-          path: app/build/outputs/apk/release/*.apk
+          files: app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
