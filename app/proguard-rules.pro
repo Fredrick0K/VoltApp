@@ -14,7 +14,7 @@
 
 # Keep HoraAdapter for RecyclerView
 -keep class com.titanium.lightdex.HoraAdapter { *; }
-keep class com.titanium.lightdex.HoraAdapter$* { *; }
+-keep class com.titanium.lightdex.HoraAdapter$* { *; }
 
 # General Android rules
 -keepattributes *Annotation*
