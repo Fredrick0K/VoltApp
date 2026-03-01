@@ -32,18 +32,19 @@ jobs:
       - name: Build debug APK
         run: bash ./gradlew assembleDebug
 
-      - name: Build release APK
-        run: bash ./gradlew assembleRelease
-
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
+          name: volt-debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload release APK
         if: github.event_name == 'release'
+        run: bash ./gradlew assembleRelease
+
+      - name: Upload release APK artifact
+        if: github.event_name == 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: volt-release
+          path: app/build/outputs/apk/release/*.apk
