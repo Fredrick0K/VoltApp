@@ -11,10 +11,6 @@
     <!-- Configuración específica para la API de REE -->
     <domain-config>
         <domain includeSubdomains="true">apidatos.ree.es</domain>
-        <pin-set expiration="2025-12-31">
-            <!-- Pinning de certificado (opcional pero recomendado) -->
-            <!-- Estos son pins de ejemplo, en producción deberías obtener los reales -->
-        </pin-set>
         <trust-anchors>
             <certificates src="system"/>
         </trust-anchors>
