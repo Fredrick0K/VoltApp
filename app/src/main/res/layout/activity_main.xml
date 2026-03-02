@@ -324,7 +324,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
-                    android:src="@android:drawable/ic_menu_manage"
+                    android:src="@android:drawable/ic_menu_myplaces"
                     app:tint="@color/black"/>
             </FrameLayout>
         </LinearLayout>
