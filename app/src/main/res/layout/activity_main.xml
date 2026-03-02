@@ -330,11 +330,15 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/btn_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:layout_width="32dp"

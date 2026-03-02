@@ -2,6 +2,7 @@ package com.titanium.lightdex;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,8 +12,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout tilesContainer;
     private LineChart priceChart;
     private ProgressBar progressBar;
+    private LinearLayout btnInfo;
     
     private ElectricityApiService apiService;
     private List<PrecioHora> preciosDelDia;
@@ -101,10 +105,13 @@ public class MainActivity extends AppCompatActivity {
         tilesContainer = findViewById(R.id.tiles_container);
         priceChart = findViewById(R.id.price_chart);
         progressBar = findViewById(R.id.progress_bar);
+        btnInfo = findViewById(R.id.btn_info);
         
         setupChart();
         
         tvFecha.setText(obtenerFechaActual());
+        
+        btnInfo.setOnClickListener(v -> mostrarAcercaDe());
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -407,5 +414,27 @@ public class MainActivity extends AppCompatActivity {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
+    }
+    
+    private void mostrarAcercaDe() {
+        String versionName = "1.0";
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionName = packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            // Use default
+        }
+        
+        String info = "⚡ VOLT\n\n" +
+                "Versión: " + versionName + "\n\n" +
+                "App de precios de luz en España\n\n" +
+                "Desarrollado por @Fredrick0K\n\n" +
+                "GitHub: github.com/Fredrick0K/VoltApp";
+        
+        new AlertDialog.Builder(this)
+                .setTitle("Acerca de Volt")
+                .setMessage(info)
+                .setPositiveButton("Cerrar", null)
+                .show();
     }
 }
