@@ -149,7 +149,11 @@ public class MainActivity extends AppCompatActivity {
         
         tvFecha.setText(obtenerFechaActual());
         
-        btnInfo.setOnClickListener(v -> mostrarAcercaDe());
+        btnInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        });
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
