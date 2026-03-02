@@ -425,16 +425,38 @@ public class MainActivity extends AppCompatActivity {
             // Use default
         }
         
-        String info = "⚡ VOLT\n\n" +
-                "Versión: " + versionName + "\n\n" +
-                "App de precios de luz en España\n\n" +
-                "Desarrollado por @Fredrick0K\n\n" +
-                "GitHub: github.com/Fredrick0K/VoltApp";
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(dpToPx(32), dpToPx(24), dpToPx(32), dpToPx(8));
         
-        new AlertDialog.Builder(this)
-                .setTitle("Acerca de Volt")
-                .setMessage(info)
-                .setPositiveButton("Cerrar", null)
-                .show();
+        TextView title = new TextView(this);
+        title.setText("⚡ " + versionName);
+        title.setTextSize(24);
+        title.setTextColor(Color.WHITE);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        layout.addView(title);
+        
+        TextView dev = new TextView(this);
+        dev.setText("@Fredrick0K");
+        dev.setTextSize(16);
+        dev.setTextColor(ContextCompat.getColor(this, R.color.metro_primary));
+        dev.setPadding(0, dpToPx(16), 0, dpToPx(4));
+        layout.addView(dev);
+        
+        TextView github = new TextView(this);
+        github.setText("github.com/Fredrick0K/VoltApp");
+        github.setTextSize(14);
+        github.setTextColor(ContextCompat.getColor(this, R.color.metro_text_muted));
+        layout.addView(github);
+        
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Volt_Dialog)
+                .setView(layout)
+                .create();
+        
+        dialog.setOnShowListener(d -> {
+            dialog.getWindow().setBackgroundDrawableResource(R.color.metro_surface);
+        });
+        
+        dialog.show();
     }
 }

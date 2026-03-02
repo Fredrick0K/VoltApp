@@ -8,4 +8,9 @@
         <item name="android:navigationBarColor">@color/metro_background</item>
         <item name="android:windowBackground">@color/metro_background</item>
     </style>
+    
+    <style name="Theme.Volt.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">@color/metro_surface</item>
+        <item name="android:textColor">@color/metro_text_primary</item>
+    </style>
 </resources>
