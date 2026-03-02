@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowCompat;
+import androidx.core.view.WindowCompat;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
