@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         dataSet.setFillColor(ContextCompat.getColor(this, R.color.metro_primary_dim));
         dataSet.setDrawFilled(true);
         dataSet.setDrawCircles(false);
-        dataSet.setLineWidth(2f);
+        dataSet.setLineWidth(2.5f);
         dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         
         LineData lineData = new LineData(dataSet);
