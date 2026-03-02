@@ -3,16 +3,16 @@ package com.titanium.lightdex;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -68,7 +68,16 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout tilesContainer;
     private LineChart priceChart;
     private ProgressBar progressBar;
-    private LinearLayout btnInfo;
+    
+    private LinearLayout navHome;
+    private LinearLayout navPrices;
+    private LinearLayout navAbout;
+    private FrameLayout navHomeFrame;
+    private FrameLayout navPricesFrame;
+    private FrameLayout navAboutFrame;
+    private ImageView navHomeIcon;
+    private ImageView navPricesIcon;
+    private ImageView navAboutIcon;
     
     private ElectricityApiService apiService;
     private List<PrecioHora> preciosDelDia;
@@ -78,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
     private String ciudadUsuario = "Madrid";
     
     private ExecutorService executorService;
-    private GestureDetector gestureDetector;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,39 +105,6 @@ public class MainActivity extends AppCompatActivity {
         cargarPrecios();
         
         checkForUpdates();
-        
-        setupSwipeGesture();
-    }
-    
-    private void setupSwipeGesture() {
-        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-            
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                float diffX = e2.getX() - e1.getX();
-                float diffY = e2.getY() - e1.getY();
-                
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffX < 0) {
-                            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        
-        View mainContainer = findViewById(R.id.main_container);
-        mainContainer.setOnTouchListener((v, event) -> {
-            gestureDetector.onTouchEvent(event);
-            return false;
-        });
     }
     
     private void inicializarVistas() {
@@ -143,7 +118,19 @@ public class MainActivity extends AppCompatActivity {
         tilesContainer = findViewById(R.id.tiles_container);
         priceChart = findViewById(R.id.price_chart);
         progressBar = findViewById(R.id.progress_bar);
-        btnInfo = findViewById(R.id.btn_info);
+        
+        navHome = findViewById(R.id.nav_home);
+        navPrices = findViewById(R.id.nav_prices);
+        navAbout = findViewById(R.id.nav_about);
+        navHomeFrame = findViewById(R.id.nav_home_frame);
+        navPricesFrame = findViewById(R.id.nav_prices_frame);
+        navAboutFrame = findViewById(R.id.nav_about_frame);
+        navHomeIcon = findViewById(R.id.nav_home_icon);
+        navPricesIcon = findViewById(R.id.nav_prices_icon);
+        navAboutIcon = findViewById(R.id.nav_about_icon);
+        
+        setupNavIndicator();
+        setupNavClicks();
         
         setupChart();
         
@@ -159,6 +146,32 @@ public class MainActivity extends AppCompatActivity {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(insets.left, 0, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
+        });
+    }
+    
+    private void setupNavIndicator() {
+        navPricesFrame.setVisibility(View.VISIBLE);
+        navHomeFrame.setVisibility(View.INVISIBLE);
+        navAboutFrame.setVisibility(View.INVISIBLE);
+    }
+    
+    private void setupNavClicks() {
+        navHome.setOnClickListener(v -> {
+            navPricesFrame.setVisibility(View.INVISIBLE);
+            navHomeFrame.setVisibility(View.INVISIBLE);
+            navAboutFrame.setVisibility(View.INVISIBLE);
+        });
+        
+        navPrices.setOnClickListener(v -> {
+            navPricesFrame.setVisibility(View.VISIBLE);
+            navHomeFrame.setVisibility(View.INVISIBLE);
+            navAboutFrame.setVisibility(View.INVISIBLE);
+        });
+        
+        navAbout.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         });
     }
     
