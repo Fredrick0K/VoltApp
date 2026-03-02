@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         tvVersion.setText("⚡ " + versionName);
         
         ImageButton btnClose = dialogView.findViewById(R.id.btn_close);
-        btnClose.setColorFilter(Color.BLACK);
+        btnClose.setColorFilter(Color.WHITE);
         
         androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Volt_Dialog)
                 .setView(dialogView)
