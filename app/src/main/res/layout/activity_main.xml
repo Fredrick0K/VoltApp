@@ -1,285 +1,340 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scroll_view"
+    android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/wp_background"
-    android:clipToPadding="false"
+    android:background="@color/metro_background"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Header con precio actual - Estilo Windows Phone -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:background="@color/wp_surface">
+            android:paddingTop="48dp"
+            android:paddingHorizontal="24dp">
 
-            <TextView
-                android:id="@+id/tv_fecha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lunes, 16 de Febrero"
-                android:textSize="16sp"
-                android:textColor="@color/wp_text_secondary"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PRECIO ACTUAL"
-                android:textSize="14sp"
-                android:textColor="@color/wp_text_secondary"
-                android:letterSpacing="0.1"/>
-
+            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="4dp">
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚡"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ENERGÍA HOY"
+                    android:textSize="12sp"
+                    android:textColor="@color/metro_text_muted"
+                    android:letterSpacing="0.2"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Main Price - Hero -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRECIO AHORA"
+                android:textSize="14sp"
+                android:textColor="@color/metro_text_muted"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom"
+                android:layout_marginBottom="8dp">
 
                 <TextView
                     android:id="@+id/tv_precio_actual"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="--.--
-"
-                    android:textSize="56sp"
+                    android:text="0,142"
+                    android:textSize="72sp"
                     android:textStyle="bold"
-                    android:textColor="@color/wp_accent"/>
+                    android:textColor="@color/metro_primary"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="€/kWh"
-                    android:textSize="20sp"
-                    android:textColor="@color/wp_text_secondary"
-                    android:layout_marginStart="8dp"/>
-
+                    android:textSize="24sp"
+                    android:textColor="@color/metro_text_muted"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"/>
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_hora_actual"
+                android:id="@+id/tv_fecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="A las --:--"
+                android:text="Domingo, 24 Mayo • 14:00"
                 android:textSize="16sp"
-                android:textColor="@color/wp_text_secondary"
-                android:layout_marginTop="8dp"/>
+                android:textColor="@color/metro_text_secondary"
+                android:layout_marginBottom="32dp"/>
 
-        </LinearLayout>
-
-        <!-- Divisor estilo Windows Phone -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@color/wp_accent"/>
-
-        <!-- Ubicación -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp"
-            android:background="@color/wp_surface">
-
-            <TextView
-                android:id="@+id/tv_ubicacion"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="📍 Cargando ubicación..."
-                android:textSize="18sp"
-                android:textColor="@color/wp_text_primary"/>
-
-            <ImageButton
-                android:id="@+id/btn_actualizar_ubicacion"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:src="@android:drawable/ic_menu_mylocation"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Actualizar ubicación"
-                app:tint="@color/wp_accent"/>
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:indeterminateTint="@color/wp_accent"/>
-
-        <!-- Barra de colores por hora -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="@color/wp_surface">
-
+            <!-- Chart Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HOURLY PRICES"
-                android:textSize="14sp"
+                android:text="EVOLUCIÓN 24H"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/wp_text_secondary"
+                android:textColor="@color/metro_text_muted"
                 android:letterSpacing="0.15"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_horas"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="85dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_hora"
-                tools:itemCount="24"/>
+                android:layout_height="180dp"
+                android:layout_marginBottom="32dp">
 
-        </LinearLayout>
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/price_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
 
-        <!-- Resumen de extremos -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp">
-
-            <!-- Más caro -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginEnd="8dp"
-                android:background="@color/price_red_bg">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MÁS CARO"
-                    android:textSize="11sp"
-                    android:textColor="@color/price_red"
-                    android:letterSpacing="0.1"/>
-
-                <TextView
-                    android:id="@+id/tv_mas_caro"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--:--"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/price_red"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:id="@+id/tv_precio_mas_caro"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--.-- €"
-                    android:textSize="16sp"
-                    android:textColor="@color/price_red"/>
-
-            </LinearLayout>
-
-            <!-- Más barato -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginStart="8dp"
-                android:background="@color/price_green_bg">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="MÁS BARATO"
-                    android:textSize="11sp"
-                    android:textColor="@color/price_green"
-                    android:letterSpacing="0.1"/>
-
-                <TextView
-                    android:id="@+id/tv_mas_barato"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--:--"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/price_green"
-                    android:layout_marginTop="4dp"/>
-
-                <TextView
-                    android:id="@+id/tv_precio_mas_barato"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--.-- €"
-                    android:textSize="16sp"
-                    android:textColor="@color/price_green"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Promedio -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:gravity="center_vertical"
-            android:background="@color/wp_surface"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp">
-
+            <!-- Hour Tiles Header -->
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="PRECIO MEDIO"
-                android:textSize="14sp"
-                android:textColor="@color/wp_text_secondary"
-                android:letterSpacing="0.1"/>
-
-            <TextView
-                android:id="@+id/tv_promedio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="--,-- €/kWh"
-                android:textSize="22sp"
+                android:text="PRÓXIMAS HORAS"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/wp_accent"/>
+                android:textColor="@color/metro_text_muted"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Horizontal Tiles -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:id="@+id/tiles_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Tiles will be added programmatically -->
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <!-- Min -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="@color/metro_surface_tile"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MÍNIMO"
+                        android:textSize="10sp"
+                        android:textColor="@color/metro_text_muted"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/tv_precio_mas_barato"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0,115"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/price_barato"
+                        android:layout_marginTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_mas_barato"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="16:00"
+                        android:textSize="12sp"
+                        android:textColor="@color/metro_text_secondary"/>
+                </LinearLayout>
+
+                <!-- Max -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="@color/metro_surface_tile"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MÁXIMO"
+                        android:textSize="10sp"
+                        android:textColor="@color/metro_text_muted"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/tv_precio_mas_caro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0,189"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/price_caro"
+                        android:layout_marginTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_mas_caro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20:00"
+                        android:textSize="12sp"
+                        android:textColor="@color/metro_text_secondary"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Average -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:background="@color/metro_surface_tile"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="PROMEDIO"
+                    android:textSize="12sp"
+                    android:textColor="@color/metro_text_muted"
+                    android:letterSpacing="0.1"/>
+
+                <TextView
+                    android:id="@+id/tv_promedio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0,142 €/kWh"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/metro_primary"/>
+            </LinearLayout>
 
         </LinearLayout>
+    </ScrollView>
 
-        <!-- Botón de notificación -->
-        <Button
-            android:id="@+id/btn_notificacion"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_width="75dp"
-            android:layout_height="56dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/bg_lupa"
-            android:backgroundTint="@color/teal_700"
-            android:text="@string/enviar_noti"
-            android:textSize="24sp" />
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/metro_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/metro_background"
+        android:borderTopWidth="1dp"
+        android:borderColor="@color/metro_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_compass"
+                app:tint="@color/metro_text_muted"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/metro_tile_active">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_manage"
+                    app:tint="@color/black"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                app:tint="@color/metro_text_muted"/>
+        </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

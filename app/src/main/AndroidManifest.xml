@@ -21,7 +21,7 @@
         android:requestLegacyExternalStorage="false"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:theme="@style/Theme.Volt"
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
 

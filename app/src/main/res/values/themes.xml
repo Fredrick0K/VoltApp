@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Volt" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/metro_primary</item>
+        <item name="colorPrimaryDark">@color/metro_primary</item>
+        <item name="colorAccent">@color/metro_primary</item>
+        <item name="android:statusBarColor">@color/metro_background</item>
+        <item name="android:navigationBarColor">@color/metro_background</item>
+        <item name="android:windowBackground">@color/metro_background</item>
+    </style>
+</resources>

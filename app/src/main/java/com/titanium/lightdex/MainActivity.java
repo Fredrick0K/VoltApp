@@ -2,16 +2,15 @@ package com.titanium.lightdex;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,9 +20,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
@@ -48,21 +51,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String GITHUB_USER = "Fredrick0K";
     private static final String REPO_NAME = "VoltApp";
     
-    private RecyclerView recyclerHoras;
-    private TextView tvUbicacion;
+    private TextView tvPrecioActual;
+    private TextView tvFecha;
     private TextView tvPromedio;
     private TextView tvMasCaro;
     private TextView tvMasBarato;
     private TextView tvPrecioMasCaro;
     private TextView tvPrecioMasBarato;
-    private TextView tvPrecioActual;
-    private TextView tvHoraActual;
-    private TextView tvFecha;
+    private LinearLayout tilesContainer;
+    private LineChart priceChart;
     private ProgressBar progressBar;
-    private ImageButton btnActualizarUbicacion;
-    private Button btnNotificacion;
     
-    private HoraAdapter horaAdapter;
     private ElectricityApiService apiService;
     private List<PrecioHora> preciosDelDia;
     private ErrorCatcher errorCatcher;
@@ -77,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        getWindow().setStatusBarColor(Color.BLACK);
+        getWindow().setNavigationBarColor(Color.BLACK);
         
         setContentView(R.layout.activity_main);
         
@@ -86,45 +87,59 @@ public class MainActivity extends AppCompatActivity {
         obtenerUbicacion();
         cargarPrecios();
         
-        NotificationScheduler.programarNotificacionDiaria(this);
-        
         checkForUpdates();
     }
     
     private void inicializarVistas() {
-        recyclerHoras = findViewById(R.id.recycler_horas);
-        tvUbicacion = findViewById(R.id.tv_ubicacion);
+        tvPrecioActual = findViewById(R.id.tv_precio_actual);
+        tvFecha = findViewById(R.id.tv_fecha);
         tvPromedio = findViewById(R.id.tv_promedio);
         tvMasCaro = findViewById(R.id.tv_mas_caro);
         tvMasBarato = findViewById(R.id.tv_mas_barato);
         tvPrecioMasCaro = findViewById(R.id.tv_precio_mas_caro);
         tvPrecioMasBarato = findViewById(R.id.tv_precio_mas_barato);
-        tvPrecioActual = findViewById(R.id.tv_precio_actual);
-        tvHoraActual = findViewById(R.id.tv_hora_actual);
-        tvFecha = findViewById(R.id.tv_fecha);
+        tilesContainer = findViewById(R.id.tiles_container);
+        priceChart = findViewById(R.id.price_chart);
         progressBar = findViewById(R.id.progress_bar);
-        btnActualizarUbicacion = findViewById(R.id.btn_actualizar_ubicacion);
-        btnNotificacion = findViewById(R.id.btn_notificacion);
         
-        btnActualizarUbicacion.setOnClickListener(v -> obtenerUbicacion());
-        btnNotificacion.setOnClickListener(v -> enviarNotificacion());
+        setupChart();
         
         tvFecha.setText(obtenerFechaActual());
         
-        horaAdapter = new HoraAdapter();
-        recyclerHoras.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerHoras.setAdapter(horaAdapter);
-        
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.scroll_view), (v, windowInsets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
     }
     
+    private void setupChart() {
+        priceChart.setBackgroundColor(Color.TRANSPARENT);
+        priceChart.getDescription().setEnabled(false);
+        priceChart.getLegend().setEnabled(false);
+        priceChart.setTouchEnabled(false);
+        priceChart.setDragEnabled(false);
+        priceChart.setScaleEnabled(false);
+        priceChart.setPinchZoom(false);
+        priceChart.setDrawGridBackground(false);
+        
+        XAxis xAxis = priceChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextColor(Color.GRAY);
+        xAxis.setGranularity(1f);
+        
+        YAxis leftAxis = priceChart.getAxisLeft();
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setGridColor(Color.parseColor("#333333"));
+        leftAxis.setTextColor(Color.GRAY);
+        
+        priceChart.getAxisRight().setEnabled(false);
+    }
+    
     private String obtenerFechaActual() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d 'de' MMMM", new Locale("es", "ES"));
-        return sdf.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM • HH:mm", new Locale("es", "ES"));
+        return sdf.format(new Date()).toUpperCase();
     }
     
     private void inicializarServicios() {
@@ -157,8 +172,6 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             
-            tvUbicacion.setText("Getting location...");
-            
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
                 @Override
                 public boolean isCancellationRequested() {
@@ -173,35 +186,11 @@ public class MainActivity extends AppCompatActivity {
             }).addOnSuccessListener(this, location -> {
                 if (location != null) {
                     obtenerNombreCiudad(location.getLatitude(), location.getLongitude());
-                } else {
-                    tryObtenerUbicacionAnterior();
                 }
             }).addOnFailureListener(e -> {
                 SecureLogger.e(TAG, "Error GPS: " + e.getMessage());
-                errorCatcher.captureError("Get Location GPS", e);
-                tvUbicacion.setText("Location: " + ciudadUsuario);
             });
-        } else {
-            tvUbicacion.setText("Location: " + ciudadUsuario);
         }
-    }
-    
-    private void tryObtenerUbicacionAnterior() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        obtenerNombreCiudad(location.getLatitude(), location.getLongitude());
-                    } else {
-                        tvUbicacion.setText("Location: " + ciudadUsuario);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    errorCatcher.captureError("Get Last Location", e);
-                    tvUbicacion.setText("Location: " + ciudadUsuario);
-                });
     }
     
     private void obtenerNombreCiudad(double lat, double lng) {
@@ -221,9 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 SecureLogger.e(TAG, "Error Geocoder: " + e.getMessage());
-                errorCatcher.captureError("Get Location", e);
-            } finally {
-                runOnUiThread(() -> tvUbicacion.setText("Location: " + ciudadUsuario));
             }
         });
     }
@@ -239,12 +225,10 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     
                     if (preciosDelDia != null && !preciosDelDia.isEmpty()) {
-                        horaAdapter.actualizarPrecios(preciosDelDia);
-                        actualizarResumen();
-                        actualizarPrecioActual();
-                        errorCatcher.showSuccess("Data loaded successfully");
+                        actualizarUI();
+                        errorCatcher.showSuccess("Data loaded");
                     } else {
-                        errorCatcher.captureApiError("Load Prices", "No data received from API");
+                        errorCatcher.captureApiError("Load Prices", "No data");
                     }
                 });
                 
@@ -258,22 +242,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
-    private void actualizarResumen() {
-        double promedio = apiService.calcularPromedio(preciosDelDia) / 1000;
-        PrecioHora masCaro = apiService.obtenerPrecioMasAlto(preciosDelDia);
-        PrecioHora masBarato = apiService.obtenerPrecioMasBajo(preciosDelDia);
-        
-        tvPromedio.setText(String.format("%.4f EUR/kWh", promedio).replace(".", ","));
-        
-        if (masCaro != null) {
-            tvMasCaro.setText(masCaro.getHora());
-            tvPrecioMasCaro.setText(String.format("%.4f EUR", masCaro.getPrecioKwh()).replace(".", ","));
-        }
-        
-        if (masBarato != null) {
-            tvMasBarato.setText(masBarato.getHora());
-            tvPrecioMasBarato.setText(String.format("%.4f EUR", masBarato.getPrecioKwh()).replace(".", ","));
-        }
+    private void actualizarUI() {
+        actualizarPrecioActual();
+        actualizarResumen();
+        actualizarChart();
+        crearTiles();
     }
     
     private void actualizarPrecioActual() {
@@ -284,8 +257,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 int horaPrecio = Integer.parseInt(horaStr.split(":")[0]);
                 if (horaPrecio == horaActual) {
-                    tvPrecioActual.setText(String.format("%.4f", ph.getPrecioKwh()).replace(".", ","));
-                    tvHoraActual.setText("At " + horaStr);
+                    String precio = String.format("%.3f", ph.getPrecioKwh()).replace(".", ",");
+                    tvPrecioActual.setText(precio);
                     return;
                 }
             } catch (Exception e) {
@@ -294,40 +267,126 @@ public class MainActivity extends AppCompatActivity {
         }
         
         tvPrecioActual.setText("--,--");
-        tvHoraActual.setText("No data");
     }
     
-    private void enviarNotificacion() {
-        if (preciosDelDia == null || preciosDelDia.isEmpty()) {
-            errorCatcher.showInfo("Loading prices...");
-            progressBar.setVisibility(View.VISIBLE);
-            
-            executorService.execute(() -> {
-                try {
-                    preciosDelDia = apiService.obtenerPreciosHoy();
-                    
-                    runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        if (preciosDelDia != null && !preciosDelDia.isEmpty()) {
-                            horaAdapter.actualizarPrecios(preciosDelDia);
-                            NotificationScheduler.mostrarNotificacion(MainActivity.this, preciosDelDia);
-                            errorCatcher.showSuccess("Notification sent");
-                        } else {
-                            errorCatcher.captureApiError("Send Notification", "Could not load prices");
-                        }
-                    });
-                } catch (Exception e) {
-                    runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        errorCatcher.captureError("Send Notification", e);
-                    });
-                }
-            });
-            return;
+    private void actualizarResumen() {
+        double promedio = apiService.calcularPromedio(preciosDelDia) / 1000;
+        PrecioHora masCaro = apiService.obtenerPrecioMasAlto(preciosDelDia);
+        PrecioHora masBarato = apiService.obtenerPrecioMasBajo(preciosDelDia);
+        
+        tvPromedio.setText(String.format("%.3f €/kWh", promedio).replace(".", ","));
+        
+        if (masCaro != null) {
+            tvMasCaro.setText(masCaro.getHora());
+            tvPrecioMasCaro.setText(String.format("%.3f", masCaro.getPrecioKwh()).replace(".", ","));
         }
         
-        NotificationScheduler.mostrarNotificacion(this, preciosDelDia);
-        errorCatcher.showSuccess("Notification sent");
+        if (masBarato != null) {
+            tvMasBarato.setText(masBarato.getHora());
+            tvPrecioMasBarato.setText(String.format("%.3f", masBarato.getPrecioKwh()).replace(".", ","));
+        }
+    }
+    
+    private void actualizarChart() {
+        List<Entry> entries = new ArrayList<>();
+        
+        for (int i = 0; i < preciosDelDia.size(); i++) {
+            float precio = (float) preciosDelDia.get(i).getPrecioKwh();
+            entries.add(new Entry(i, precio));
+        }
+        
+        LineDataSet dataSet = new LineDataSet(entries, "Precios");
+        dataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary));
+        dataSet.setFillColor(ContextCompat.getColor(this, R.color.metro_primary_dim));
+        dataSet.setDrawFilled(true);
+        dataSet.setDrawCircles(false);
+        dataSet.setLineWidth(2f);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        
+        LineData lineData = new LineData(dataSet);
+        priceChart.setData(lineData);
+        priceChart.invalidate();
+    }
+    
+    private void crearTiles() {
+        tilesContainer.removeAllViews();
+        
+        int horaActual = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        
+        for (int i = 0; i < preciosDelDia.size(); i++) {
+            PrecioHora ph = preciosDelDia.get(i);
+            String horaStr = ph.getHora();
+            int hora;
+            try {
+                hora = Integer.parseInt(horaStr.split(":")[0]);
+            } catch (Exception e) {
+                hora = i;
+            }
+            
+            boolean esActual = (hora == horaActual);
+            boolean esBarato = ph.getPrecioKwh() < 0.13;
+            boolean esCaro = ph.getPrecioKwh() > 0.17;
+            
+            LinearLayout tile = crearTile(ph, horaStr, esActual, esBarato, esCaro);
+            tilesContainer.addView(tile);
+        }
+    }
+    
+    private LinearLayout crearTile(PrecioHora ph, String hora, boolean esActual, boolean esBarato, boolean esCaro) {
+        LinearLayout tile = new LinearLayout(this);
+        tile.setOrientation(LinearLayout.VERTICAL);
+        tile.setPadding(dpToPx(16), dpToPx(16), dpToPx(16), dpToPx(16));
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                dpToPx(100), dpToPx(100));
+        params.setMargins(0, 0, dpToPx(8), 0);
+        tile.setLayoutParams(params);
+        
+        if (esActual) {
+            tile.setBackgroundColor(ContextCompat.getColor(this, R.color.metro_primary));
+        } else {
+            tile.setBackgroundColor(ContextCompat.getColor(this, R.color.metro_surface_tile));
+        }
+        
+        TextView label = new TextView(this);
+        label.setText(esActual ? "AHORA" : (esBarato ? "VALLE" : (esCaro ? "PUNTA" : "NORMAL")));
+        label.setTextSize(10);
+        label.setTextColor(esActual ? Color.BLACK : Color.GRAY);
+        label.setAllCaps(true);
+        label.setTypeface(null, android.graphics.Typeface.BOLD);
+        
+        TextView precio = new TextView(this);
+        precio.setText(String.format("%.3f", ph.getPrecioKwh()).replace(".", ","));
+        precio.setTextSize(20);
+        precio.setTextColor(esActual ? Color.BLACK : Color.WHITE);
+        precio.setTypeface(null, android.graphics.Typeface.BOLD);
+        precio.setPadding(0, dpToPx(8), 0, 0);
+        
+        TextView horaTv = new TextView(this);
+        horaTv.setText(hora);
+        horaTv.setTextSize(11);
+        horaTv.setTextColor(esActual ? Color.BLACK : Color.GRAY);
+        horaTv.setPadding(0, dpToPx(4), 0, 0);
+        
+        LinearLayout priceContainer = new LinearLayout(this);
+        priceContainer.setOrientation(LinearLayout.VERTICAL);
+        priceContainer.addView(precio);
+        priceContainer.addView(horaTv);
+        
+        tile.addView(label);
+        tile.addView(priceContainer);
+        
+        return tile;
+    }
+    
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+    
+    private void checkForUpdates() {
+        UpdateChecker updateChecker = new UpdateChecker(this, GITHUB_USER, REPO_NAME);
+        updateChecker.checkForUpdate();
     }
     
     @Override
@@ -338,9 +397,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 obtenerUbicacion();
-            } else {
-                Toast.makeText(this, "Using default location", Toast.LENGTH_SHORT).show();
-                tvUbicacion.setText("Location: " + ciudadUsuario);
             }
         }
     }
@@ -351,10 +407,5 @@ public class MainActivity extends AppCompatActivity {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
-    }
-    
-    private void checkForUpdates() {
-        UpdateChecker updateChecker = new UpdateChecker(this, GITHUB_USER, REPO_NAME);
-        updateChecker.checkForUpdate();
     }
 }
