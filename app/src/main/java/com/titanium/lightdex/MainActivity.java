@@ -426,73 +426,25 @@ public class MainActivity extends AppCompatActivity {
             // Use default
         }
         
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Volt_Dialog);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_about, null);
         
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(dpToPx(32), dpToPx(32), dpToPx(32), dpToPx(32));
-        layout.setGravity(android.view.Gravity.CENTER);
+        TextView tvVersion = dialogView.findViewById(R.id.tv_version);
+        tvVersion.setText("⚡ " + versionName);
         
-        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ImageButton btnClose = dialogView.findViewById(R.id.btn_close);
+        btnClose.setColorFilter(Color.BLACK);
         
-        TextView title = new TextView(this);
-        title.setText("⚡ " + versionName);
-        title.setTextSize(36);
-        title.setTextColor(Color.WHITE);
-        title.setTypeface(null, android.graphics.Typeface.BOLD);
-        title.setLayoutParams(titleParams);
-        layout.addView(title);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Volt_Dialog)
+                .setView(dialogView)
+                .create();
         
-        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        textParams.topMargin = dpToPx(24);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
         
-        TextView dev = new TextView(this);
-        dev.setText("@Fredrick0K");
-        dev.setTextSize(18);
-        dev.setTextColor(ContextCompat.getColor(this, R.color.metro_primary));
-        dev.setLayoutParams(textParams);
-        layout.addView(dev);
+        dialog.show();
         
-        LinearLayout.LayoutParams githubParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        githubParams.topMargin = dpToPx(8);
-        
-        TextView github = new TextView(this);
-        github.setText("github.com/Fredrick0K/VoltApp");
-        github.setTextSize(14);
-        github.setTextColor(ContextCompat.getColor(this, R.color.metro_text_muted));
-        github.setLayoutParams(githubParams);
-        layout.addView(github);
-        
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(dpToPx(48), dpToPx(48));
-        btnParams.topMargin = dpToPx(32);
-        
-        final androidx.appcompat.app.AlertDialog[] dialogRef = new androidx.appcompat.app.AlertDialog[1];
-        
-        ImageButton closeBtn = new ImageButton(this);
-        closeBtn.setBackgroundResource(R.drawable.metro_tile_active);
-        closeBtn.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
-        closeBtn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
-        closeBtn.setColorFilter(Color.BLACK);
-        closeBtn.setLayoutParams(btnParams);
-        closeBtn.setOnClickListener(v -> {
-            if (dialogRef[0] != null) {
-                dialogRef[0].dismiss();
-            }
-        });
-        layout.addView(closeBtn);
-        
-        builder.setView(layout);
-        
-        dialogRef[0] = builder.create();
-        
-        dialogRef[0].show();
-        
-        dialogRef[0].getWindow().setLayout(
+        dialog.getWindow().setLayout(
                 (int) (getResources().getDisplayMetrics().widthPixels * 0.85),
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogRef[0].getWindow().setBackgroundDrawableResource(R.color.metro_surface);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.metro_surface);
     }
 }
