@@ -350,30 +350,44 @@ public class MainActivity extends AppCompatActivity {
         params.setMargins(0, 0, dpToPx(8), 0);
         tile.setLayoutParams(params);
         
+        int bgColor;
+        int textColor;
+        
         if (esActual) {
-            tile.setBackgroundColor(ContextCompat.getColor(this, R.color.metro_primary));
+            bgColor = ContextCompat.getColor(this, R.color.metro_primary);
+            textColor = Color.BLACK;
+        } else if (esBarato) {
+            bgColor = ContextCompat.getColor(this, R.color.price_barato_bg);
+            textColor = ContextCompat.getColor(this, R.color.price_barato);
+        } else if (esCaro) {
+            bgColor = ContextCompat.getColor(this, R.color.price_caro_bg);
+            textColor = ContextCompat.getColor(this, R.color.price_caro);
         } else {
-            tile.setBackgroundColor(ContextCompat.getColor(this, R.color.metro_surface_tile));
+            bgColor = ContextCompat.getColor(this, R.color.metro_primary_dim);
+            textColor = ContextCompat.getColor(this, R.color.metro_primary);
         }
+        
+        tile.setBackgroundColor(bgColor);
         
         TextView label = new TextView(this);
         label.setText(esActual ? "AHORA" : (esBarato ? "VALLE" : (esCaro ? "PUNTA" : "NORMAL")));
         label.setTextSize(10);
-        label.setTextColor(esActual ? Color.BLACK : Color.GRAY);
+        label.setTextColor(esActual ? Color.BLACK : textColor);
         label.setAllCaps(true);
         label.setTypeface(null, android.graphics.Typeface.BOLD);
         
         TextView precio = new TextView(this);
         precio.setText(String.format("%.3f", ph.getPrecioKwh()).replace(".", ","));
         precio.setTextSize(20);
-        precio.setTextColor(esActual ? Color.BLACK : Color.WHITE);
+        precio.setTextColor(esActual ? Color.BLACK : textColor);
         precio.setTypeface(null, android.graphics.Typeface.BOLD);
         precio.setPadding(0, dpToPx(8), 0, 0);
         
         TextView horaTv = new TextView(this);
         horaTv.setText(hora);
         horaTv.setTextSize(11);
-        horaTv.setTextColor(esActual ? Color.BLACK : Color.GRAY);
+        horaTv.setTextColor(esActual ? Color.BLACK : textColor);
+        horaTv.setAlpha(0.7f);
         horaTv.setPadding(0, dpToPx(4), 0, 0);
         
         LinearLayout priceContainer = new LinearLayout(this);

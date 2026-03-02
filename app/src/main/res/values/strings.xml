@@ -30,5 +30,8 @@
     <string name="precio_alto">Precio alto</string>
     <!--Boton Enviar Notificacion-->
     <string name="enviar_noti">🔔</string>
+    <!--Boton Cancelar Notificacion-->
+    <string name="version">v1.0.3</string>
+    <string name="user_git">@Frederick</string>
 
 </resources>
