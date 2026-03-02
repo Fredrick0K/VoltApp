@@ -292,7 +292,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:padding="16dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp"
+            android:paddingHorizontal="16dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -302,10 +304,9 @@
             android:gravity="center">
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_compass"
-                app:tint="@color/metro_text_muted"/>
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_home_outline"/>
         </LinearLayout>
 
         <LinearLayout
@@ -316,15 +317,15 @@
             android:gravity="center">
 
             <FrameLayout
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/metro_tile_active">
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/metro_button_square">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_thunder"
+                    android:src="@drawable/ic_thunder_outline"
                     app:tint="@color/black"/>
             </FrameLayout>
         </LinearLayout>
@@ -341,10 +342,9 @@
             android:focusable="true">
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_info_details"
-                app:tint="@color/metro_text_muted"/>
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_info_outline"/>
         </LinearLayout>
 
         </LinearLayout>
