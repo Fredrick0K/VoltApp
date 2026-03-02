@@ -39,9 +39,10 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/metro_tile_active"
+        android:background="@drawable/metro_button_square"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:scaleType="centerInside"
+        android:padding="12dp"
         android:contentDescription="Cerrar"/>
 
 </LinearLayout>
