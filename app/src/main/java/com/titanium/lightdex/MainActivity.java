@@ -7,7 +7,10 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private String ciudadUsuario = "Madrid";
     
     private ExecutorService executorService;
+    private GestureDetector gestureDetector;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +97,39 @@ public class MainActivity extends AppCompatActivity {
         cargarPrecios();
         
         checkForUpdates();
+        
+        setupSwipeGesture();
+    }
+    
+    private void setupSwipeGesture() {
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+            
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                float diffX = e2.getX() - e1.getX();
+                float diffY = e2.getY() - e1.getY();
+                
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffX < 0) {
+                            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        
+        View mainContainer = findViewById(R.id.main_container);
+        mainContainer.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return false;
+        });
     }
     
     private void inicializarVistas() {
