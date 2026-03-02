@@ -469,6 +469,8 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(dpToPx(48), dpToPx(48));
         btnParams.topMargin = dpToPx(32);
         
+        final androidx.appcompat.app.AlertDialog[] dialogRef = new androidx.appcompat.app.AlertDialog[1];
+        
         ImageButton closeBtn = new ImageButton(this);
         closeBtn.setBackgroundResource(R.drawable.metro_tile_active);
         closeBtn.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
@@ -476,20 +478,21 @@ public class MainActivity extends AppCompatActivity {
         closeBtn.setColorFilter(Color.BLACK);
         closeBtn.setLayoutParams(btnParams);
         closeBtn.setOnClickListener(v -> {
-            androidx.appcompat.app.AlertDialog dialog = (androidx.appcompat.app.AlertDialog) v.getContext();
-            dialog.dismiss();
+            if (dialogRef[0] != null) {
+                dialogRef[0].dismiss();
+            }
         });
         layout.addView(closeBtn);
         
         builder.setView(layout);
         
-        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialogRef[0] = builder.create();
         
-        dialog.show();
+        dialogRef[0].show();
         
-        dialog.getWindow().setLayout(
+        dialogRef[0].getWindow().setLayout(
                 (int) (getResources().getDisplayMetrics().widthPixels * 0.85),
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawableResource(R.color.metro_surface);
+        dialogRef[0].getWindow().setBackgroundDrawableResource(R.color.metro_surface);
     }
 }
