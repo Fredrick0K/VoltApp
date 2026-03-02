@@ -23,6 +23,10 @@
     
     <!-- Legacy names -->
     <color name="wp_background">#FF000000</color>
+    <color name="wp_surface">#FF1E1E1E</color>
+    <color name="wp_surface_elevated">#FF2D2D2D</color>
+    <color name="wp_text_primary">#FFFFFFFF</color>
+    <color name="wp_text_secondary">#FFB3B3B3</color>
     <color name="wp_accent">#FF06BCF9</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
