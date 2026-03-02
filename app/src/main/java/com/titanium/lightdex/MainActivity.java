@@ -2,7 +2,6 @@ package com.titanium.lightdex;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageInfo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
@@ -10,16 +9,12 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -70,13 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     
     private LinearLayout navHome;
-    private LinearLayout navPrices;
     private LinearLayout navAbout;
-    private FrameLayout navHomeFrame;
-    private FrameLayout navPricesFrame;
-    private FrameLayout navAboutFrame;
     private ImageView navHomeIcon;
-    private ImageView navPricesIcon;
     private ImageView navAboutIcon;
     
     private ElectricityApiService apiService;
@@ -120,13 +110,8 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         
         navHome = findViewById(R.id.nav_home);
-        navPrices = findViewById(R.id.nav_prices);
         navAbout = findViewById(R.id.nav_about);
-        navHomeFrame = findViewById(R.id.nav_home_frame);
-        navPricesFrame = findViewById(R.id.nav_prices_frame);
-        navAboutFrame = findViewById(R.id.nav_about_frame);
         navHomeIcon = findViewById(R.id.nav_home_icon);
-        navPricesIcon = findViewById(R.id.nav_prices_icon);
         navAboutIcon = findViewById(R.id.nav_about_icon);
         
         setupNavIndicator();
@@ -136,12 +121,6 @@ public class MainActivity extends AppCompatActivity {
         
         tvFecha.setText(obtenerFechaActual());
         
-        btnInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        });
-        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(insets.left, 0, insets.right, insets.bottom);
@@ -150,25 +129,19 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void setupNavIndicator() {
-        navPricesFrame.setVisibility(View.VISIBLE);
-        navHomeFrame.setVisibility(View.INVISIBLE);
-        navAboutFrame.setVisibility(View.INVISIBLE);
+        navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
+        navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
     }
     
     private void setupNavClicks() {
         navHome.setOnClickListener(v -> {
-            navPricesFrame.setVisibility(View.INVISIBLE);
-            navHomeFrame.setVisibility(View.INVISIBLE);
-            navAboutFrame.setVisibility(View.INVISIBLE);
-        });
-        
-        navPrices.setOnClickListener(v -> {
-            navPricesFrame.setVisibility(View.VISIBLE);
-            navHomeFrame.setVisibility(View.INVISIBLE);
-            navAboutFrame.setVisibility(View.INVISIBLE);
+            navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
+            navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
         });
         
         navAbout.setOnClickListener(v -> {
+            navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
+            navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -363,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
         dataSet.setDrawFilled(true);
         dataSet.setDrawCircles(false);
         dataSet.setLineWidth(2.5f);
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataSet.setMode(LineDataSet.Mode.LINEAR);
         
         LineData lineData = new LineData(dataSet);
         priceChart.setData(lineData);
@@ -417,8 +390,8 @@ public class MainActivity extends AppCompatActivity {
             bgColor = ContextCompat.getColor(this, R.color.price_caro_bg);
             textColor = ContextCompat.getColor(this, R.color.price_caro);
         } else {
-            bgColor = ContextCompat.getColor(this, R.color.metro_primary_dim);
-            textColor = ContextCompat.getColor(this, R.color.metro_primary);
+            bgColor = ContextCompat.getColor(this, R.color.metro_surface_tile);
+            textColor = ContextCompat.getColor(this, R.color.metro_text_secondary);
         }
         
         tile.setBackgroundColor(bgColor);

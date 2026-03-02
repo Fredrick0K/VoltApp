@@ -27,13 +27,15 @@
             android:contentDescription="Volver"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="113dp"
             android:layout_height="wrap_content"
-            android:text="ACERCA DE"
-            android:textSize="12sp"
-            android:textColor="@color/metro_text_muted"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
             android:letterSpacing="0.2"
-            android:layout_marginStart="16dp"/>
+            android:text="ACERCA DE"
+            android:textColor="@color/metro_text_muted"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- Divider -->
@@ -60,7 +62,7 @@
                 android:id="@+id/tv_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⚡ VOLT"
+                android:text="VOLT$"
                 android:textSize="48sp"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -147,7 +149,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DESCRIPCIÓN"
+                        android:text="Version"
                         android:textSize="10sp"
                         android:textColor="@color/metro_text_muted"
                         android:letterSpacing="0.1"/>
@@ -155,7 +157,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="App de precios de electricidad en España en tiempo real."
+                        android:text="v1.0.3"
                         android:textSize="14sp"
                         android:textColor="@color/metro_text_secondary"
                         android:layout_marginTop="4dp"/>
@@ -163,15 +165,15 @@
 
             </LinearLayout>
 
-            <!-- Swipe hint -->
+            <!-- Authtor Rights -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="310dp"
                 android:layout_height="wrap_content"
-                android:text="← Desliza a la derecha para volver"
-                android:textSize="12sp"
-                android:textColor="@color/metro_text_muted"
                 android:layout_marginTop="32dp"
-                android:alpha="0.5"/>
+                android:alpha="0.5"
+                android:text="Derechos de autor © 2026 @Fredrick0K. Todos los derechos reservados."
+                android:textColor="@color/metro_text_muted"
+                android:textSize="12sp" />
 
         </LinearLayout>
     </ScrollView>

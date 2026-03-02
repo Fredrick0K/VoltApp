@@ -15,16 +15,13 @@
     
     <!-- Price Colors -->
     <color name="price_barato">#FF4CAF50</color>
-    <color name="price_medio">#FFFFC107</color>
     <color name="price_caro">#FFF44336</color>
     <color name="price_barato_bg">#1A4CAF50</color>
-    <color name="price_medio_bg">#1AFFC107</color>
     <color name="price_caro_bg">#1AF44336</color>
     
     <!-- Legacy names -->
     <color name="wp_background">#FF000000</color>
     <color name="wp_surface">#FF1E1E1E</color>
-    <color name="wp_surface_elevated">#FF2D2D2D</color>
     <color name="wp_text_primary">#FFFFFFFF</color>
     <color name="wp_text_secondary">#FFB3B3B3</color>
     <color name="wp_accent">#FF06BCF9</color>
