@@ -46,8 +46,10 @@ public class AboutActivity extends AppCompatActivity {
             // Use default
         }
         
-        TextView tvVersion = findViewById(R.id.tv_version);
-        tvVersion.setText("⚡ " + versionName);
+        TextView tvVersionNumber = findViewById(R.id.tv_version_number);
+        if (tvVersionNumber != null) {
+            tvVersionNumber.setText("Versión " + versionName);
+        }
     }
     
     private void setupBackButton() {
