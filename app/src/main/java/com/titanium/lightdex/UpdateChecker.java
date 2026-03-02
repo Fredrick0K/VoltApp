@@ -140,10 +140,11 @@ public class UpdateChecker {
                 if (latest > current) return true;
                 if (latest < current) return false;
             }
+            return false;
         } catch (NumberFormatException e) {
             Log.e(TAG, "Error parsing version: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     private void showUpdateDialog(String latestVersion, String downloadUrl) {
