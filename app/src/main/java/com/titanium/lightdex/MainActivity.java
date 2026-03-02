@@ -467,35 +467,4 @@ public class MainActivity extends AppCompatActivity {
             executorService.shutdown();
         }
     }
-    
-    private void mostrarAcercaDe() {
-        String versionName = "1.0";
-        try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionName = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            // Use default
-        }
-        
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_about, null);
-        
-        TextView tvVersion = dialogView.findViewById(R.id.tv_version);
-        tvVersion.setText("⚡ " + versionName);
-        
-        ImageButton btnClose = dialogView.findViewById(R.id.btn_close);
-        btnClose.setColorFilter(Color.WHITE);
-        
-        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Volt_Dialog)
-                .setView(dialogView)
-                .create();
-        
-        btnClose.setOnClickListener(v -> dialog.dismiss());
-        
-        dialog.show();
-        
-        dialog.getWindow().setLayout(
-                (int) (getResources().getDisplayMetrics().widthPixels * 0.85),
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawableResource(R.color.metro_surface);
-    }
 }
