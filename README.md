@@ -19,7 +19,7 @@ Android app to track real-time electricity prices in Spain (PVPC). Built with Wi
 
 ## Installation
 
-1. Download the APK [|here!](https://github.com/Fredrick0K/VoltApp/releases/download/v1.1/app-debug.apk)
+1. Download the APK [**here!**](https://github.com/Fredrick0K/VoltApp/releases/download/v1.1/app-debug.apk)
 2. Install
 3. Enjoy!
 
