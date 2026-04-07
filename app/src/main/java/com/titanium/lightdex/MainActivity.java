@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private String obtenerFechaActual() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM • HH:mm", new Locale("es", "ES"));
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM ツ HH:mm", new Locale("es", "ES"));
         return sdf.format(new Date()).toUpperCase();
     }
     
