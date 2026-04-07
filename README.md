@@ -1,6 +1,6 @@
 # Volt - Electricity Price Tracker
 
-Android app to track real-time electricity prices in Spain (PVPC). Built with Windows Phone Metro UI style.
+Android app to track real-time electricity prices in Spain (PVPC).
 
 ## Features
 
