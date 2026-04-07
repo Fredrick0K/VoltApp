@@ -13,8 +13,8 @@ android {
         applicationId "com.titanium.lightdex"
         minSdk 24
         targetSdk 36
-        versionCode 3
-        versionName "v1.1.1"
+        versionCode 4
+        versionName "v1.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
