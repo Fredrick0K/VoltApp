@@ -1,3 +1,4 @@
+[![APK Build Status](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml/badge.svg?branch=main&event=push)](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml)
 # Volt - Electricity Price Tracker
 
 Android app to track real-time electricity prices in Spain (PVPC).
