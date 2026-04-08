@@ -31,7 +31,6 @@
     <!--Boton Enviar Notificacion-->
     <string name="enviar_noti">🔔</string>
     <!--Boton Cancelar Notificacion-->
-    <string name="version">v1.1.1</string>
-    <string name="user_git">@Frederick</string>
+    <string name="user_git">@Fredrick</string>
 
 </resources>

@@ -27,15 +27,33 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make gradlew executable
+      - name: Create Keystore
+        if: github.event_name == 'release'
         run: |
-          chmod +x gradlew
-          ls -la gradlew
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
 
-      - name: Build debug APK
+      - name: Build Release APK
+        if: github.event_name == 'release'
+        env:
+          KEYSTORE_FILE: keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: bash ./gradlew assembleRelease
+
+      - name: Build Debug APK
+        if: github.event_name != 'release'
         run: bash ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload Release APK
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Volt-Release
+          path: app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload Debug APK
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
           name: Volt
@@ -45,6 +63,6 @@ jobs:
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
-          files: app/build/outputs/apk/debug/app-debug.apk
+          files: app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
