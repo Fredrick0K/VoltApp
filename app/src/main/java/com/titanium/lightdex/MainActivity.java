@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     
     private TextView tvPrecioActual;
     private TextView tvFecha;
+    private TextView tvCiudad;
     private TextView tvPromedio;
     private TextView tvMasCaro;
     private TextView tvMasBarato;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView navAboutIcon;
     
     private ElectricityApiService apiService;
+    private UpdateChecker updateChecker;
     private List<PrecioHora> preciosDelDia;
     private ErrorCatcher errorCatcher;
     
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        SecureLogger.init(this);
         
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         getWindow().setStatusBarColor(Color.BLACK);
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private void inicializarVistas() {
         tvPrecioActual = findViewById(R.id.tv_precio_actual);
         tvFecha = findViewById(R.id.tv_fecha);
+        tvCiudad = findViewById(R.id.tv_ciudad);
         tvPromedio = findViewById(R.id.tv_promedio);
         tvMasCaro = findViewById(R.id.tv_mas_caro);
         tvMasBarato = findViewById(R.id.tv_mas_barato);
@@ -179,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
     
     private void inicializarServicios() {
         apiService = new ElectricityApiService(this);
+        updateChecker = new UpdateChecker(this, GITHUB_USER, REPO_NAME);
         errorCatcher = new ErrorCatcher(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         executorService = Executors.newSingleThreadExecutor();
@@ -241,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (ciudad != null) {
                         ciudadUsuario = ciudad;
+                        runOnUiThread(() -> {
+                            tvCiudad.setText(ciudadUsuario);
+                        });
                     }
                 }
             } catch (IOException e) {
@@ -434,7 +443,6 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void checkForUpdates() {
-        UpdateChecker updateChecker = new UpdateChecker(this, GITHUB_USER, REPO_NAME);
         updateChecker.checkForUpdate();
     }
     
@@ -455,6 +463,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
+        }
+        if (updateChecker != null) {
+            updateChecker.shutdown();
         }
     }
 }

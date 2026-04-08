@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -49,6 +49,15 @@
                     android:letterSpacing="0.2"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_ciudad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Madrid"
+                android:textSize="14sp"
+                android:textColor="@color/metro_primary"
+                android:layout_marginBottom="8dp"/>
 
             <!-- Main Price - Hero -->
             <TextView

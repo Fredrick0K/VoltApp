@@ -68,14 +68,14 @@
                 android:textStyle="bold"
                 android:layout_marginTop="32dp"/>
 
-            <TextView
-                android:id="@+id/tv_version_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Versión 1.1.1"
-                android:textSize="14sp"
-                android:textColor="@color/metro_text_muted"
-                android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/tv_version_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Versión"
+        android:textSize="14sp"
+        android:textColor="@color/metro_text_muted"
+        android:layout_marginTop="8dp"/>
 
             <!-- Info Cards -->
             <LinearLayout
@@ -108,7 +108,9 @@
                         android:text="@Fredrick0K"
                         android:textSize="18sp"
                         android:textColor="@color/metro_primary"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_marginTop="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </LinearLayout>
 
                 <!-- GitHub -->
@@ -135,7 +137,9 @@
                         android:text="github.com/Fredrick0K/VoltApp"
                         android:textSize="16sp"
                         android:textColor="@color/white"
-                        android:layout_marginTop="4dp"/>
+                        android:layout_marginTop="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </LinearLayout>
 
                 <!-- Description -->
@@ -149,15 +153,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Version"
+                        android:text="VERSION"
                         android:textSize="10sp"
                         android:textColor="@color/metro_text_muted"
                         android:letterSpacing="0.1"/>
 
                     <TextView
+                        android:id="@+id/tv_version_build"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="v1.1.1"
+                        android:text="1.1.3"
                         android:textSize="14sp"
                         android:textColor="@color/metro_text_secondary"
                         android:layout_marginTop="4dp"/>

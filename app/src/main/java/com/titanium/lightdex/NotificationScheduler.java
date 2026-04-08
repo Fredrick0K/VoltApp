@@ -27,6 +27,7 @@ public class NotificationScheduler {
     private static final String CHANNEL_ID = "electricidad_precios";
     private static final int NOTIFICATION_ID = 1001;
     private static final int ALARM_REQUEST_CODE = 2001;
+    private static final String ACTION_NOTIFICATION = "com.titanium.lightdex.ACTION_NOTIFICATION";
     
     /**
      * Programa una notificación diaria a las 8:00 AM
@@ -36,6 +37,7 @@ public class NotificationScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         
         Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction(ACTION_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
                 ALARM_REQUEST_CODE,
@@ -182,6 +184,10 @@ public class NotificationScheduler {
     public static class NotificationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent == null || !ACTION_NOTIFICATION.equals(intent.getAction())) {
+                return;
+            }
+            
             SecureLogger.d(TAG, "Alarma recibida, obteniendo precios...");
             
             // Obtener precios en un hilo secundario
@@ -212,6 +218,7 @@ public class NotificationScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         
         Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction(ACTION_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
                 ALARM_REQUEST_CODE,

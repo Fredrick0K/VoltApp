@@ -1,55 +1,60 @@
 package com.titanium.lightdex;
 
 import android.util.Log;
-
-import com.github.mikephil.charting.BuildConfig;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 
 /**
  * Logger seguro que solo muestra logs en modo debug
- * En release, todos los logs son eliminados automáticamente
  */
 public class SecureLogger {
     
-    private static final boolean DEBUG = BuildConfig.DEBUG;
+    private static Boolean isDebuggable;
+
+    private static boolean isDebug(Context context) {
+        if (isDebuggable == null) {
+            isDebuggable = (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        }
+        return isDebuggable;
+    }
+
+    public static void init(Context context) {
+        isDebuggable = (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+    }
     
     public static void d(String tag, String message) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.d(tag, message);
         }
     }
     
     public static void i(String tag, String message) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.i(tag, message);
         }
     }
     
     public static void w(String tag, String message) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.w(tag, message);
         }
     }
     
     public static void e(String tag, String message) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.e(tag, message);
         }
     }
     
     public static void e(String tag, String message, Throwable tr) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.e(tag, message, tr);
         }
     }
-    
-    /**
-     * Log de error que SIEMPRE se muestra (para errores críticos)
-     * Pero en release solo muestra mensaje genérico
-     */
+
     public static void error(String tag, String message) {
-        if (DEBUG) {
+        if (isDebuggable != null && isDebuggable) {
             Log.e(tag, message);
         }
-        // En release, no logueamos detalles sensibles
     }
 }
