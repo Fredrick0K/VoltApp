@@ -28,6 +28,6 @@ Requires Android 6.0+ (API 23).
 
 ---
 
-###### **© 2026 titanium_dev(Fredrick0K). Todos los derechos reservados.**
+###### **© 2026 TxsDev(Fredrick0K). Todos los derechos reservados.**
 
 ###### Este código es propiedad exclusiva del autor. Queda prohibida su reproducción, distribución, modificación o uso comercial sin autorización previa por escrito.
