@@ -96,7 +96,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DESARROLLADOR"
+                        android:text="DEV"
                         android:textSize="10sp"
                         android:textColor="@color/metro_text_muted"
                         android:letterSpacing="0.1"/>
@@ -125,7 +125,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="GITHUB"
+                        android:text="REPO"
                         android:textSize="10sp"
                         android:textColor="@color/metro_text_muted"
                         android:letterSpacing="0.1"/>
@@ -178,7 +178,7 @@
                 android:alpha="0.5"
                 android:text="Derechos de autor © 2026 @Fredrick0K. Todos los derechos reservados."
                 android:textColor="@color/metro_text_muted"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
 
         </LinearLayout>
     </ScrollView>
