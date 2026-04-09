@@ -3,16 +3,22 @@ package com.titanium.lightdex;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
+
+import java.lang.ref.WeakReference;
+
+import androidx.activity.ComponentActivity;
 import androidx.core.content.FileProvider;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +34,7 @@ public class UpdateChecker {
     private static final String FILE_PROVIDER_AUTHORITY = "com.titanium.lightdex.fileprovider";
 
     private String userAgent;
+    private WeakReference<ComponentActivity> activityRef;
 
     private final Context context;
     private final String githubUser;
@@ -35,8 +42,9 @@ public class UpdateChecker {
     private final Handler mainHandler;
     private final ExecutorService executor;
 
-    public UpdateChecker(Context context, String githubUser, String repoName) {
-        this.context = context.getApplicationContext();
+    public UpdateChecker(ComponentActivity activity, String githubUser, String repoName) {
+        this.context = activity.getApplicationContext();
+        this.activityRef = new WeakReference<>(activity);
         this.githubUser = githubUser;
         this.repoName = repoName;
         this.mainHandler = new Handler(Looper.getMainLooper());
@@ -109,7 +117,7 @@ public class UpdateChecker {
 
             return parseReleaseResponse(response.toString());
         } else {
-            Log.w(TAG, "GitHub API returned: " + responseCode);
+            SecureLogger.w(TAG, "GitHub API returned: " + responseCode);
             return null;
         }
     }
@@ -186,22 +194,36 @@ public class UpdateChecker {
     }
 
     private void showUpdateDialog(final ReleaseInfo releaseInfo) {
-        new AlertDialog.Builder(context)
+        ComponentActivity activity = activityRef.get();
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            SecureLogger.d(TAG, "Activity not available, skipping dialog");
+            return;
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle("Nueva version disponible")
                 .setMessage("La version " + releaseInfo.version + " esta disponible. Desea actualizar ahora?")
-                .setPositiveButton("Actualizar", new android.content.DialogInterface.OnClickListener() {
+                .setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(android.content.DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which) {
                         downloadAndInstall(releaseInfo.downloadUrl);
                     }
                 })
                 .setNegativeButton("Mas tarde", null)
                 .setCancelable(true)
-                .show();
+                .create();
+
+        dialog.show();
     }
 
     private void downloadAndInstall(final String downloadUrl) {
-        final ProgressDialog progressDialog = new ProgressDialog(context);
+        ComponentActivity activity = activityRef.get();
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            SecureLogger.d(TAG, "Activity not available, cannot show progress");
+            return;
+        }
+
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setMessage("Descargando actualizacion...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setCancelable(false);
@@ -211,12 +233,14 @@ public class UpdateChecker {
             @Override
             public void run() {
                 try {
-                    File apkFile = downloadApk(downloadUrl, progressDialog);
+                    File apkFile = downloadApk(downloadUrl);
                     if (apkFile != null && apkFile.exists()) {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.dismiss();
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
                                 installApk(apkFile);
                             }
                         });
@@ -224,17 +248,21 @@ public class UpdateChecker {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.dismiss();
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
                                 Toast.makeText(context, "Error al descargar", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } catch (final Exception e) {
-                    Log.e(TAG, "Download error: " + e.getMessage());
+                    SecureLogger.e(TAG, "Download error: " + e.getMessage());
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            progressDialog.dismiss();
+                            if (progressDialog.isShowing()) {
+                                progressDialog.dismiss();
+                            }
                             Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -243,7 +271,7 @@ public class UpdateChecker {
         });
     }
 
-    private File downloadApk(String downloadUrl, ProgressDialog progressDialog) throws Exception {
+    private File downloadApk(String downloadUrl) throws Exception {
         URL url = new URL(downloadUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -254,9 +282,6 @@ public class UpdateChecker {
         if (responseCode != HttpURLConnection.HTTP_OK) {
             throw new Exception("HTTP " + responseCode);
         }
-
-        int fileLength = connection.getContentLength();
-        progressDialog.setMax(fileLength > 0 ? fileLength : 100);
 
         String fileName = "volt_update.apk";
         File outputDir = new File(context.getCacheDir(), "updates");
@@ -269,39 +294,16 @@ public class UpdateChecker {
         FileOutputStream output = new FileOutputStream(outputFile);
 
         byte[] buffer = new byte[8192];
-        long total = 0;
         int count;
-        int lastProgress = 0;
-
         while ((count = input.read(buffer)) != -1) {
-            total += count;
             output.write(buffer, 0, count);
-
-            if (fileLength > 0) {
-                final int progress = (int) (total * 100 / fileLength);
-                if (progress > lastProgress) {
-                    lastProgress = progress;
-                    final int finalProgress = progress;
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.setProgress(finalProgress);
-                        }
-                    });
-
-                    if (finalProgress % 25 == 0) {
-                        SecureLogger.d(TAG, "Download progress: " + finalProgress + "%");
-                    }
-                }
-            }
         }
-
-        SecureLogger.d(TAG, "Download complete: " + total + " bytes");
 
         output.close();
         input.close();
         connection.disconnect();
 
+        SecureLogger.d(TAG, "Download complete: " + outputFile.length() + " bytes");
         return outputFile;
     }
 
@@ -320,7 +322,7 @@ public class UpdateChecker {
 
             context.startActivity(intent);
         } catch (Exception e) {
-            Log.e(TAG, "Install error: " + e.getMessage());
+            SecureLogger.e(TAG, "Install error: " + e.getMessage());
             Toast.makeText(context, "No se pudo iniciar la instalacion", Toast.LENGTH_SHORT).show();
         }
     }

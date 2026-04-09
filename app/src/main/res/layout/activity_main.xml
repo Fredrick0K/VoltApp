@@ -120,7 +120,7 @@
                 android:layout_height="180dp"
                 android:layout_marginBottom="32dp">
 
-                <com.github.mikephil.charting.charts.LineChart
+                <com.github.mikephil.charting.charts.CombinedChart
                     android:id="@+id/price_chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>

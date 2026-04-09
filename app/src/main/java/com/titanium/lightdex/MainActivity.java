@@ -23,9 +23,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvPrecioMasCaro;
     private TextView tvPrecioMasBarato;
     private LinearLayout tilesContainer;
-    private LineChart priceChart;
+    private CombinedChart priceChart;
     private ProgressBar progressBar;
     
     private LinearLayout navHome;
@@ -162,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
         priceChart.setScaleEnabled(false);
         priceChart.setPinchZoom(false);
         priceChart.setDrawGridBackground(false);
+        
+        priceChart.setDrawOrder(new CombinedChart.DrawOrder[]{
+                CombinedChart.DrawOrder.BAR,
+                CombinedChart.DrawOrder.LINE
+        });
         
         XAxis xAxis = priceChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -332,23 +341,37 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void actualizarChart() {
-        List<Entry> entries = new ArrayList<>();
+        List<BarEntry> barEntries = new ArrayList<>();
+        List<Entry> lineEntries = new ArrayList<>();
         
         for (int i = 0; i < preciosDelDia.size(); i++) {
             float precio = (float) preciosDelDia.get(i).getPrecioKwh();
-            entries.add(new Entry(i, precio));
+            barEntries.add(new BarEntry(i, precio));
+            lineEntries.add(new Entry(i, precio));
         }
         
-        LineDataSet dataSet = new LineDataSet(entries, "Precios");
-        dataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary));
-        dataSet.setFillColor(ContextCompat.getColor(this, R.color.metro_primary_dim));
-        dataSet.setDrawFilled(true);
-        dataSet.setDrawCircles(false);
-        dataSet.setLineWidth(2.5f);
-        dataSet.setMode(LineDataSet.Mode.LINEAR);
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Precios Bar");
+        barDataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary_dim));
+        barDataSet.setDrawValues(false);
         
-        LineData lineData = new LineData(dataSet);
-        priceChart.setData(lineData);
+        LineDataSet lineDataSet = new LineDataSet(lineEntries, "Precios Line");
+        lineDataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary));
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setLineWidth(3f);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        lineDataSet.setDrawValues(false);
+        lineDataSet.setCubicIntensity(0.2f);
+        
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.8f);
+        
+        LineData lineData = new LineData(lineDataSet);
+        
+        CombinedData combinedData = new CombinedData();
+        combinedData.setData(barData);
+        combinedData.setData(lineData);
+        
+        priceChart.setData(combinedData);
         priceChart.invalidate();
     }
     
