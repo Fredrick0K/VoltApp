@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         lineDataSet.setLineWidth(3f);
         lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         lineDataSet.setDrawValues(false);
-        lineDataSet.setCubicIntensity(0.2f);
+        lineDataSet.setCubicIntensity(0.1f);
         
         BarData barData = new BarData(barDataSet);
         barData.setBarWidth(0.8f);
