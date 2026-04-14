@@ -28,6 +28,6 @@ Requires Android 6.0+ (API 23).
 
 ---
 
-###### **© 2026 TxsDev(Fredrick0K). Todos los derechos reservados.**
+###### **© 2026 TxsDev(Fredrick0K). All rights reserved.**
 
-###### Este código es propiedad exclusiva del autor. Queda prohibida su reproducción, distribución, modificación o uso comercial sin autorización previa por escrito.
+###### This code is the exclusive property of the author. Its reproduction, distribution, modification, or commercial use is strictly prohibited without prior written authorization.
