@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                     
                     if (preciosDelDia != null && !preciosDelDia.isEmpty()) {
                         actualizarUI();
-                        errorCatcher.showSuccess("Data loaded");
+                        errorCatcher.showSuccess("Data On.");
                     } else {
                         errorCatcher.captureApiError("Load Prices", "No data");
                     }

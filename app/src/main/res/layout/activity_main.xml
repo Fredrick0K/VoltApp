@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ENERGÍA HOY"
+                    android:text="V0LT$"
                     android:textSize="12sp"
                     android:textColor="@color/metro_text_muted"
                     android:letterSpacing="0.2"
@@ -99,7 +99,7 @@
                 android:id="@+id/tv_fecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Domingo, 24 Mayo • 14:00"
+                android:text="Domingo, 24 Mayo • 14:00 (Fecha Por Defecto)"
                 android:textSize="16sp"
                 android:textColor="@color/metro_text_secondary"
                 android:layout_marginBottom="32dp"/>
@@ -108,7 +108,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EVOLUCIÓN 24H"
+                android:text="GRAFICA EVOLUCIÓN 24H"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="@color/metro_text_muted"
@@ -184,7 +184,7 @@
                         android:id="@+id/tv_precio_mas_barato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0,115"
+                        android:text="0,115 (PD)"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:textColor="@color/price_barato"
@@ -194,7 +194,7 @@
                         android:id="@+id/tv_mas_barato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="16:00"
+                        android:text="16:00(PD)"
                         android:textSize="12sp"
                         android:textColor="@color/metro_text_secondary"/>
                 </LinearLayout>
@@ -221,7 +221,7 @@
                         android:id="@+id/tv_precio_mas_caro"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0,189"
+                        android:text="0,189 (PD)"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:textColor="@color/price_caro"
@@ -231,7 +231,7 @@
                         android:id="@+id/tv_mas_caro"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20:00"
+                        android:text="20:00 (PD)"
                         android:textSize="12sp"
                         android:textColor="@color/metro_text_secondary"/>
                 </LinearLayout>
@@ -260,7 +260,7 @@
                     android:id="@+id/tv_promedio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0,142 €/kWh"
+                    android:text="0,142 €/kWh (PD)"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@color/metro_primary"/>
