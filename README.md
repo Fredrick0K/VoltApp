@@ -16,9 +16,9 @@ Android app to track real-time electricity prices in Spain (PVPC).
 ## Tech Stack
 
 - Android (Java)
-- MPAndroidChart
+- [**MPAndroidChart**](https://github.com/PhilJay/MPAndroidChart)
 - Google Play Services Location
-- ESIOS API (Red Eléctrica de España)
+- ESIOS API (REE)
 
 ## Installation
 
@@ -26,7 +26,8 @@ Android app to track real-time electricity prices in Spain (PVPC).
 2. Install.
 3. Enjoy!
 
-Requires Android 6.0+ (API 23).
+>[!NOTE]
+>Compatible with Android 6.0+ (API 23).
 
 ---
 
