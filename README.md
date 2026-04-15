@@ -1,6 +1,5 @@
 [![Build Android APK](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml/badge.svg)](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml)
-
-![Downloads](https://img.shields.io/github/downloads/Fredrick0K/VoltApp/total?label=Downloads&style=for-the-badge&color=1C30A3&logo=android&logoColor=white)
+![Downloads](https://img.shields.io/github/downloads/Fredrick0K/VoltApp/total?label=Downloads&style=flat-square&color=1C30A3&logo=android&logoColor=white)
 
 # VOLT$ - Electricity Price Tracker
 
