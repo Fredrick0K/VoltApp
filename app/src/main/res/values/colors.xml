@@ -19,12 +19,31 @@
     <color name="price_barato_bg">#1A4CAF50</color>
     <color name="price_caro_bg">#1AF44336</color>
     
-    <!-- Legacy names -->
-    <color name="wp_background">#FF000000</color>
-    <color name="wp_surface">#FF1E1E1E</color>
-    <color name="wp_text_primary">#FFFFFFFF</color>
-    <color name="wp_text_secondary">#FFB3B3B3</color>
-    <color name="wp_accent">#FF06BCF9</color>
-    <color name="black">#FF000000</color>
+    <!-- Legacy -->
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    
+    <!-- Fluent aliases for compatibility -->
+    <color name="fluent_primary">#FF06BCF9</color>
+    <color name="fluent_primary_dim">#9906BCF9</color>
+    <color name="fluent_background">#FF000000</color>
+    <color name="fluent_surface">#FF1E1E1E</color>
+    <color name="fluent_surface_elevated">#FF262626</color>
+    <color name="fluent_text_primary">#FFFFFFFF</color>
+    <color name="fluent_text_secondary">#FFB3B3B3</color>
+    <color name="fluent_text_muted">#FF808080</color>
+    <color name="fluent_border">#FF333333</color>
+    <color name="price_cheap">#FF4CAF50</color>
+    <color name="price_normal">#FFF44336</color>
+    <color name="price_expensive">#FFF44336</color>
+    <color name="price_cheap_bg">#1A4CAF50</color>
+    <color name="price_normal_bg">#1A4CAF50</color>
+    <color name="price_expensive_bg">#1AF44336</color>
+    <color name="status_success">#FF4CAF50</color>
+    <color name="status_warning">#FFFFC107</color>
+    <color name="status_error">#FFF44336</color>
+    <color name="chart_line">#FF06BCF9</color>
+    <color name="chart_fill">#6606BCF9</color>
+    <color name="chart_bar">#4D06BCF9</color>
+    <color name="chart_grid">#FF333333</color>
 </resources>
