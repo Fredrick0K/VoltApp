@@ -1,28 +1,12 @@
-[![Build Android APK](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml/badge.svg)](https://github.com/Fredrick0K/VoltApp/actions/workflows/android.yml)
 ![Downloads](https://img.shields.io/github/downloads/Fredrick0K/VoltApp/total?label=Downloads&style=flat-square&color=1C30A3&logo=android&logoColor=white)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Fredrick0K/VoltApp/android.yml?label=WorkflowStatus&style=flat-square)
 
-# VOLT$ - Electricity Price Tracker
-
-Android app to track real-time electricity prices in Spain (PVPC).
-
-## Features
-
-- Real-time electricity prices (PVPC)
-- 24h price evolution chart
-- Hourly price tiles (Ahora, Valle, Punta, Normal)
-- Location-based pricing
-- Min/Max/Average statistics
-
-## Tech Stack
-
-- Android (Java)
-- [**MPAndroidChart**](https://github.com/PhilJay/MPAndroidChart)
-- Google Play Services Location
-- ESIOS API (REE)
+# VOLT$ 
 
 ## Installation
 
-1. Download the APK [**here!**](https://github.com/Fredrick0K/VoltApp/releases/download/v1.2.3/app-release.apk)
+![Download](https://img.shields.io/github/v/release/Fredrick0K/VoltApp?label=Download&style=for-the-badge&color=1C30A3&logo=android&logoColor=#3DDC84)
+1. Download the app.
 2. Install.
 3. Enjoy!
 
