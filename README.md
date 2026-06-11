@@ -8,7 +8,7 @@
 [![Download](https://img.shields.io/github/v/release/Fredrick0K/VoltApp?label=Download&style=for-the-badge&color=1C30A3&logo=android&logoColor=#3DDC84)](https://github.com/Fredrick0K/VoltApp/releases/download/v1.2.3/app-release.apk)
 1. Download the app.
 2. Install.
-3. Enjoy!
+3. And start saving!
 
 >[!NOTE]
 >Compatible with Android 6.0+ (API 23).
