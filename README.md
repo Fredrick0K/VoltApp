@@ -17,4 +17,4 @@
 
 ###### **© 2026 TxsDev(Fredrick0K). All rights reserved.**
 
-###### This code is the exclusive property of the author. Its reproduction, distribution, modification, or commercial use is strictly prohibited without prior written authorization.
+###### This code is the exclusive property of the author. Its reproduction, distribution, modification, or commercial use is strictly prohibited without prior authorization.
