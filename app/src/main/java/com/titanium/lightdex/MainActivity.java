@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvPrecioMasCaro;
     private TextView tvPrecioMasBarato;
     private LinearLayout tilesContainer;
+    private HorizontalScrollView tilesScroll;
     private CombinedChart priceChart;
     private ProgressBar progressBar;
     
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         tvPrecioMasCaro = findViewById(R.id.tv_precio_mas_caro);
         tvPrecioMasBarato = findViewById(R.id.tv_precio_mas_barato);
         tilesContainer = findViewById(R.id.tiles_container);
+        tilesScroll = findViewById(R.id.tiles_scroll);
         priceChart = findViewById(R.id.price_chart);
         progressBar = findViewById(R.id.progress_bar);
         
@@ -380,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
         
         int horaActual = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         
+        final int[] currentHourIndex = {-1};
         for (int i = 0; i < preciosDelDia.size(); i++) {
             PrecioHora ph = preciosDelDia.get(i);
             String horaStr = ph.getHora();
@@ -391,11 +395,22 @@ public class MainActivity extends AppCompatActivity {
             }
             
             boolean esActual = (hora == horaActual);
+            if (esActual) currentHourIndex[0] = i;
+            
             boolean esBarato = ph.getPrecioKwh() < 0.13;
             boolean esCaro = ph.getPrecioKwh() > 0.17;
             
             LinearLayout tile = crearTile(ph, horaStr, esActual, esBarato, esCaro);
             tilesContainer.addView(tile);
+        }
+        
+        if (currentHourIndex[0] >= 0) {
+            int targetIndex = currentHourIndex[0];
+            tilesScroll.post(() -> {
+                int tileWidth = dpToPx(108);
+                int scrollTo = targetIndex * tileWidth;
+                tilesScroll.smoothScrollTo(scrollTo, 0);
+            });
         }
     }
     
