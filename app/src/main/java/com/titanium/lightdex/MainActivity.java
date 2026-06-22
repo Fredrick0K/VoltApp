@@ -1,5 +1,6 @@
 package com.titanium.lightdex;
 
+import android.animation.ObjectAnimator;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -23,7 +23,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -40,7 +39,6 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.titanium.lightdex.models.PrecioHora;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,20 +68,16 @@ public class MainActivity extends AppCompatActivity {
     private HorizontalScrollView tilesScroll;
     private CombinedChart priceChart;
     private ProgressBar progressBar;
-    
     private LinearLayout navHome;
     private LinearLayout navAbout;
     private ImageView navHomeIcon;
     private ImageView navAboutIcon;
-    
     private ElectricityApiService apiService;
     private UpdateChecker updateChecker;
     private List<PrecioHora> preciosDelDia;
     private ErrorCatcher errorCatcher;
-    
     private FusedLocationProviderClient fusedLocationClient;
-    private String ciudadUsuario = "Madrid";
-    
+    private String ciudadUsuarioDefo = "Madrid";
     private ExecutorService executorService;
     
     @Override
@@ -258,9 +252,9 @@ public class MainActivity extends AppCompatActivity {
                         ciudad = addresses.get(0).getSubAdminArea();
                     }
                     if (ciudad != null) {
-                        ciudadUsuario = ciudad;
+                        ciudadUsuarioDefo = ciudad;
                         runOnUiThread(() -> {
-                            tvCiudad.setText(ciudadUsuario);
+                            tvCiudad.setText(ciudadUsuarioDefo);
                         });
                     }
                 }
@@ -409,7 +403,12 @@ public class MainActivity extends AppCompatActivity {
             tilesScroll.post(() -> {
                 int tileWidth = dpToPx(108);
                 int scrollTo = targetIndex * tileWidth;
-                tilesScroll.smoothScrollTo(scrollTo, 0);
+                
+                // Scroll suave personalizado (1.5 segundos para un feeling premium)
+                ObjectAnimator animator = ObjectAnimator.ofInt(tilesScroll, "scrollX", scrollTo);
+                animator.setDuration(1500); 
+                animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                animator.start();
             });
         }
     }

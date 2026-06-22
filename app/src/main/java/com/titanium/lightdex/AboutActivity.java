@@ -50,10 +50,10 @@ public class AboutActivity extends AppCompatActivity {
             // Use default
         }
         
-        TextView tvVersionNumber = findViewById(R.id.tv_version_number);
-        if (tvVersionNumber != null) {
-            tvVersionNumber.setText("Versión " + versionName);
-        }
+//        TextView tvVersionNumber = findViewById(R.id.tv_version_number);
+//        if (tvVersionNumber != null) {
+//            tvVersionNumber.setText("Versión " + versionName);
+//        }
         
         TextView tvVersionBuild = findViewById(R.id.tv_version_build);
         if (tvVersionBuild != null) {
