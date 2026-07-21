@@ -1,12 +1,12 @@
 package com.titanium.lightdex;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.titanium.lightdex.models.PrecioHora;
@@ -80,63 +80,40 @@ public class PriceAdapter extends RecyclerView.Adapter<PriceAdapter.PriceViewHol
          */
         public void bind(PrecioHora precio) {
             tvHora.setText(precio.getHora());
-            tvPrecio.setText(precio.getPrecioFormateado() + " €/kWh");
+            tvPrecio.setText(precio.getPrecioFormateado());
             
             // Mostrar indicador si es el precio más alto o más bajo
             if (precio.esMasCaro()) {
-                tvIndicador.setText("🔴 MÁS CARO");
+                tvIndicador.setText(itemView.getContext().getString(R.string.maximo));
                 tvIndicador.setVisibility(View.VISIBLE);
-                tvIndicador.setTextColor(Color.parseColor("#D32F2F"));
+                tvIndicador.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.price_high));
             } else if (precio.esMasBarato()) {
-                tvIndicador.setText("🟢 MÁS BARATO");
+                tvIndicador.setText(itemView.getContext().getString(R.string.minimo));
                 tvIndicador.setVisibility(View.VISIBLE);
-                tvIndicador.setTextColor(Color.parseColor("#388E3C"));
+                tvIndicador.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.price_low));
             } else {
                 tvIndicador.setVisibility(View.GONE);
             }
             
-            // Cambiar color de la barra lateral según el nivel de precio
+            // Width based on price relative to some max (hypothetically)
+            // For now let's just use the level to color it
             int colorBarra = obtenerColorPorNivel(precio.getNivelPrecio());
             viewColorBar.setBackgroundColor(colorBarra);
             
-            // Cambiar el color de fondo según el nivel
-            int colorFondo = obtenerColorFondoPorNivel(precio.getNivelPrecio());
-            itemView.setBackgroundColor(colorFondo);
+            // In minimalist theme, we keep background consistent
+            itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.bg_main));
         }
         
-        /**
-         * Obtiene el color para la barra lateral según el nivel de precio
-         * @param nivel "bajo", "medio", o "alto"
-         * @return Color en formato int
-         */
         private int obtenerColorPorNivel(String nivel) {
             switch (nivel) {
                 case "bajo":
-                    return Color.parseColor("#4CAF50"); // Verde
+                    return ContextCompat.getColor(itemView.getContext(), R.color.price_low);
                 case "medio":
-                    return Color.parseColor("#FFC107"); // Amarillo
+                    return ContextCompat.getColor(itemView.getContext(), R.color.price_mid);
                 case "alto":
-                    return Color.parseColor("#F44336"); // Rojo
+                    return ContextCompat.getColor(itemView.getContext(), R.color.price_high);
                 default:
-                    return Color.GRAY;
-            }
-        }
-        
-        /**
-         * Obtiene un color de fondo suave según el nivel de precio
-         * @param nivel "bajo", "medio", o "alto"
-         * @return Color en formato int
-         */
-        private int obtenerColorFondoPorNivel(String nivel) {
-            switch (nivel) {
-                case "bajo":
-                    return Color.parseColor("#E8F5E9"); // Verde muy claro
-                case "medio":
-                    return Color.parseColor("#FFF9C4"); // Amarillo muy claro
-                case "alto":
-                    return Color.parseColor("#FFEBEE"); // Rojo muy claro
-                default:
-                    return Color.WHITE;
+                    return ContextCompat.getColor(itemView.getContext(), R.color.text_muted);
             }
         }
     }

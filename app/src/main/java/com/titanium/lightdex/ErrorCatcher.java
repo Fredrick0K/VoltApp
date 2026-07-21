@@ -37,7 +37,7 @@ public class ErrorCatcher {
      * @param error Error message
      */
     public void captureApiError(String operation, String error) {
-        String errorMessage = "ERR: " + operation + " | " + error;
+        String errorMessage = context.getString(R.string.error_prefijo) + " " + operation + " | " + error;
         SecureLogger.error(TAG, errorMessage);
         
         new Handler(Looper.getMainLooper()).post(() -> {
@@ -51,7 +51,7 @@ public class ErrorCatcher {
      */
     public void showSuccess(String message) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            Toast.makeText(context, "OK: " + message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.ok_prefijo) + " " + message, Toast.LENGTH_SHORT).show();
         });
     }
     
@@ -61,7 +61,7 @@ public class ErrorCatcher {
      */
     public void showInfo(String message) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            Toast.makeText(context, "INFO: " + message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.info_prefijo) + " " + message, Toast.LENGTH_SHORT).show();
         });
     }
     
@@ -70,7 +70,7 @@ public class ErrorCatcher {
      */
     private String buildErrorMessage(String operation, Throwable error) {
         StringBuilder sb = new StringBuilder();
-        sb.append("ERR: ").append(operation);
+        sb.append(context.getString(R.string.error_prefijo)).append(" ").append(operation);
         
         if (error != null) {
             sb.append(" | ").append(error.getClass().getSimpleName());

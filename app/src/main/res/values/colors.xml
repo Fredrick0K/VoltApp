@@ -1,49 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Metro Theme Colors -->
-    <color name="metro_primary">#FF06BCF9</color>
-    <color name="metro_primary_dim">#9906BCF9</color>
+    <!-- Modern Minimalist Palette - LIGHT (Default) -->
+    <color name="bg_main">#F8F9FA</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_elevated">#F1F3F4</color>
     
-    <!-- Dark Theme Base -->
-    <color name="metro_background">#FF000000</color>
-    <color name="metro_surface">#FF1E1E1E</color>
-    <color name="metro_surface_tile">#FF262626</color>
-    <color name="metro_text_primary">#FFFFFFFF</color>
-    <color name="metro_text_secondary">#FFB3B3B3</color>
-    <color name="metro_text_muted">#FF808080</color>
-    <color name="metro_border">#FF333333</color>
+    <!-- Accents -->
+    <color name="accent_primary">#00B8D4</color>
+    <color name="accent_primary_dim">#1A00B8D4</color>
+    <color name="accent_secondary">#6200EE</color>
     
-    <!-- Price Colors -->
-    <color name="price_barato">#FF4CAF50</color>
-    <color name="price_caro">#FFF44336</color>
-    <color name="price_barato_bg">#1A4CAF50</color>
-    <color name="price_caro_bg">#1AF44336</color>
+    <!-- Text -->
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#4A4A4A</color>
+    <color name="text_muted">#757575</color>
+    <color name="text_on_accent">#FFFFFF</color>
     
-    <!-- Legacy -->
-    <color name="white">#FFFFFFFF</color>
-    <color name="black">#FF000000</color>
+    <!-- Status -->
+    <color name="price_low">#00C853</color>
+    <color name="price_low_bg">#1A00C853</color>
+    <color name="price_mid">#FBC02D</color>
+    <color name="price_mid_bg">#1AFBC02D</color>
+    <color name="price_high">#D50000</color>
+    <color name="price_high_bg">#1AD50000</color>
     
-    <!-- Fluent aliases for compatibility -->
-    <color name="fluent_primary">#FF06BCF9</color>
-    <color name="fluent_primary_dim">#9906BCF9</color>
-    <color name="fluent_background">#FF000000</color>
-    <color name="fluent_surface">#FF1E1E1E</color>
-    <color name="fluent_surface_elevated">#FF262626</color>
-    <color name="fluent_text_primary">#FFFFFFFF</color>
-    <color name="fluent_text_secondary">#FFB3B3B3</color>
-    <color name="fluent_text_muted">#FF808080</color>
-    <color name="fluent_border">#FF333333</color>
-    <color name="price_cheap">#FF4CAF50</color>
-    <color name="price_normal">#FFF44336</color>
-    <color name="price_expensive">#FFF44336</color>
-    <color name="price_cheap_bg">#1A4CAF50</color>
-    <color name="price_normal_bg">#1A4CAF50</color>
-    <color name="price_expensive_bg">#1AF44336</color>
-    <color name="status_success">#FF4CAF50</color>
-    <color name="status_warning">#FFFFC107</color>
-    <color name="status_error">#FFF44336</color>
-    <color name="chart_line">#FF06BCF9</color>
-    <color name="chart_fill">#6606BCF9</color>
-    <color name="chart_bar">#4D06BCF9</color>
-    <color name="chart_grid">#FF333333</color>
+    <color name="border_subtle">#EEEEEE</color>
+
+    <!-- Legacy aliases to prevent breakage -->
+    <color name="metro_primary">@color/accent_primary</color>
+    <color name="metro_primary_dim">@color/accent_primary_dim</color>
+    <color name="metro_background">@color/bg_main</color>
+    <color name="metro_surface">@color/surface_card</color>
+    <color name="metro_surface_tile">@color/surface_card</color>
+    <color name="metro_text_primary">@color/text_primary</color>
+    <color name="metro_text_secondary">@color/text_secondary</color>
+    <color name="metro_text_muted">@color/text_muted</color>
+    <color name="metro_border">@color/border_subtle</color>
+
+    <color name="price_barato">@color/price_low</color>
+    <color name="price_caro">@color/price_high</color>
+    <color name="price_barato_bg">@color/price_low_bg</color>
+    <color name="price_caro_bg">@color/price_high_bg</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 </resources>

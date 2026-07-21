@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Volt</string>
-    
-    <!-- Mensajes de la app -->
+
+    <!-- App Flow -->
     <string name="cargando">Cargando precios…</string>
     <string name="error_conexion">Error de conexión. Verifica tu internet.</string>
     <string name="sin_datos">No hay datos disponibles</string>
+    <string name="datos_cargados">Datos cargados.</string>
+    <string name="reintentar">REINTENTAR</string>
+    <string name="error_carga_titulo">Ups! Algo salió mal</string>
+    <string name="error_carga_desc">No pudimos conectar con el servidor de precios. Por favor, comprueba tu conexión.</string>
+    <string name="error_prefijo">ERR:</string>
+    <string name="cambiar_tema">Cambiar tema</string>
+    <string name="ok_prefijo">OK:</string>
+    <string name="info_prefijo">INFO:</string>
+    <string name="placeholder_precio">--,--</string>
     <string name="ubicacion_por_defecto">Madrid</string>
-    
+
+    <!-- UI Elements -->
+    <string name="precio_actual">PRECIO ACTUAL</string>
+    <string name="evolucion_24h">EVOLUCIÓN 24H</string>
+    <string name="proximas_horas">PRÓXIMAS HORAS</string>
+    <string name="minimo">MÍNIMO</string>
+    <string name="maximo">MÁXIMO</string>
+    <string name="promedio_diario">PROMEDIO DIARIO</string>
+    <string name="unidad_kwh">€/kWh</string>
+    <string name="acerca_de">ACERCA DE</string>
+    <string name="desarrollador">DESARROLLADOR</string>
+    <string name="repositorio">REPOSITORIO</string>
+    <string name="derechos_autor">Derechos de autor © 2026 @%1$s\nTodos los derechos reservados.</string>
+
+    <!-- Status labels -->
+    <string name="ahora">AHORA</string>
+    <string name="valle">VALLE</string>
+    <string name="llano">LLANO</string>
+    <string name="punta">PUNTA</string>
+
     <!-- Permisos -->
     <string name="permiso_ubicacion_titulo">Ubicación necesaria</string>
     <string name="permiso_ubicacion_mensaje">Para mostrar los precios de tu zona necesitamos acceso a tu ubicación.</string>
@@ -18,19 +46,17 @@
     <string name="notif_titulo">⚡ Precios de la Luz Hoy</string>
     <string name="notif_canal_nombre">Precios Diarios</string>
     <string name="notif_canal_descripcion">Notificaciones diarias con resumen de precios</string>
-    
-    <!-- Resumen -->
-    <string name="promedio">💰 Promedio: %.2f €/MWh</string>
-    <string name="mas_caro">🔴 Más caro: %s - %.2f€</string>
-    <string name="mas_barato">🟢 Más barato: %s - %.2f€</string>
-    
-    <!-- Niveles de precio -->
-    <string name="precio_bajo">Precio bajo</string>
-    <string name="precio_medio">Precio medio</string>
-    <string name="precio_alto">Precio alto</string>
-    <!--Boton Enviar Notificacion-->
-    <string name="enviar_noti">🔔</string>
-    <!--Boton Cancelar Notificacion-->
-    <string name="user_git">@Fredrick</string>
 
+    <string name="update_available_title">Nueva versión disponible</string>
+    <string name="update_available_msg">La versión %1$s está disponible. ¿Deseas actualizar ahora?</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="mas_tarde">Más tarde</string>
+    <string name="descargando_update">Descargando actualización…</string>
+    <string name="error_descarga">Error al descargar</string>
+    <string name="error_instalacion">No se pudo iniciar la instalación</string>
+
+    <string name="notif_mas_caro">🔴 Más caro:</string>
+    <string name="notif_mas_barato">🟢 Más barato:</string>
+
+    <string name="user_git">Fredrick0K</string>
 </resources>

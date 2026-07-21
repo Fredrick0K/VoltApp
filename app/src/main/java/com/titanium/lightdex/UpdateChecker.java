@@ -201,15 +201,15 @@ public class UpdateChecker {
         }
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle("Nueva version disponible")
-                .setMessage("La version " + releaseInfo.version + " esta disponible. Desea actualizar ahora?")
-                .setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
+                .setTitle(context.getString(R.string.update_available_title))
+                .setMessage(context.getString(R.string.update_available_msg, releaseInfo.version))
+                .setPositiveButton(context.getString(R.string.actualizar), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         downloadAndInstall(releaseInfo.downloadUrl);
                     }
                 })
-                .setNegativeButton("Mas tarde", null)
+                .setNegativeButton(context.getString(R.string.mas_tarde), null)
                 .setCancelable(true)
                 .create();
 
@@ -224,7 +224,7 @@ public class UpdateChecker {
         }
 
         final ProgressDialog progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage("Descargando actualizacion...");
+        progressDialog.setMessage(context.getString(R.string.descargando_update));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setCancelable(false);
         progressDialog.show();
@@ -251,7 +251,7 @@ public class UpdateChecker {
                                 if (progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
-                                Toast.makeText(context, "Error al descargar", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, context.getString(R.string.error_descarga), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -263,7 +263,7 @@ public class UpdateChecker {
                             if (progressDialog.isShowing()) {
                                 progressDialog.dismiss();
                             }
-                            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.error_prefijo) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -323,7 +323,7 @@ public class UpdateChecker {
             context.startActivity(intent);
         } catch (Exception e) {
             SecureLogger.e(TAG, "Install error: " + e.getMessage());
-            Toast.makeText(context, "No se pudo iniciar la instalacion", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.error_instalacion), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -4,65 +4,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="1dp">
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="16dp"
+    android:gravity="center_vertical"
+    android:background="@color/bg_main">
 
-    <!-- Barra de color lateral -->
-    <View
-        android:id="@+id/view_color_bar"
-        android:layout_width="4dp"
-        android:layout_height="match_parent"
-        android:background="#4CAF50"
-        android:layout_marginEnd="12dp"/>
-
-    <!-- Contenedor de información -->
-    <LinearLayout
-        android:layout_width="0dp"
+    <!-- Hora -->
+    <TextView
+        android:id="@+id/tv_hora"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textSize="18sp"
+        android:fontFamily="@font/plus_jakarta_sans_medium"
+        android:textColor="@color/text_primary" />
+
+    <!-- Progress Indicator / Bar -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="6dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_marginHorizontal="16dp"
+        android:background="@color/border_subtle">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <View
+            android:id="@+id/view_color_bar"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:background="@color/accent_primary" />
+    </FrameLayout>
+
+    <!-- Precio -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/tv_precio"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:text="0,142"
+            android:textSize="16sp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
 
-            <!-- Hora -->
-            <TextView
-                android:id="@+id/tv_hora"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#212121"
-                android:layout_marginEnd="12dp"/>
-
-            <!-- Precio -->
-            <TextView
-                android:id="@+id/tv_precio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="100.00 €/MWh"
-                android:textSize="16sp"
-                android:textColor="#424242"/>
-
-        </LinearLayout>
-
-        <!-- Indicador de precio más alto/bajo -->
         <TextView
             android:id="@+id/tv_indicador"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔴 MÁS CARO"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginTop="4dp"
-            android:visibility="gone"/>
-
+            android:text="MÁXIMO"
+            android:textSize="9sp"
+            android:textColor="@color/price_high"
+            android:letterSpacing="0.1"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>

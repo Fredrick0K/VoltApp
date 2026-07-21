@@ -83,11 +83,11 @@ public class ElectricityApiService {
                 SecureLogger.d(TAG, "Precios obtenidos: " + precios.size());
                 
                 if (precios.isEmpty()) {
-                    throw new Exception("La API respondió pero no hay datos de precios");
+                    throw new Exception(context.getString(R.string.sin_datos));
                 }
                 
             } else {
-                String errorMsg = "Error en la API. Código HTTP: " + responseCode;
+                String errorMsg = context.getString(R.string.error_prefijo) + " HTTP " + responseCode;
                 SecureLogger.error(TAG, errorMsg);
                 throw new Exception(errorMsg);
             }
@@ -95,12 +95,12 @@ public class ElectricityApiService {
             connection.disconnect();
             
         } catch (java.net.SocketTimeoutException e) {
-            throw new Exception("Tiempo de espera agotado. Verifica tu conexión a internet.");
+            throw new Exception(context.getString(R.string.error_conexion));
         } catch (java.net.UnknownHostException e) {
-            throw new Exception("No se puede conectar al servidor. Verifica tu conexión.");
+            throw new Exception(context.getString(R.string.error_conexion));
         } catch (Exception e) {
             SecureLogger.error(TAG, "Error al obtener precios");
-            throw new Exception("Error al obtener precios: " + e.getMessage());
+            throw new Exception(context.getString(R.string.error_conexion) + " " + e.getMessage());
         }
         
         return precios;

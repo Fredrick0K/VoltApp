@@ -7,11 +7,14 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import androidx.core.view.WindowCompat;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -31,7 +34,14 @@ public class AboutActivity extends AppCompatActivity {
         setupVersion();
         setupBackButton();
         setupGithubLinks();
-        
+        setupCopyright();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.about_container), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return windowInsets;
+        });
+
         View rootView = findViewById(android.R.id.content);
         rootView.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeRight() {
@@ -50,11 +60,6 @@ public class AboutActivity extends AppCompatActivity {
             // Use default
         }
         
-//        TextView tvVersionNumber = findViewById(R.id.tv_version_number);
-//        if (tvVersionNumber != null) {
-//            tvVersionNumber.setText("Versión " + versionName);
-//        }
-        
         TextView tvVersionBuild = findViewById(R.id.tv_version_build);
         if (tvVersionBuild != null) {
             tvVersionBuild.setText(versionName);
@@ -72,29 +77,26 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void setupGithubLinks() {
-        TextView tvDev = findViewById(R.id.tv_dev);
-        if (tvDev != null) {
-            tvDev.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openUrl(GITHUB_PROFILE);
-                }
-            });
+        View cardDev = findViewById(R.id.card_dev);
+        if (cardDev != null) {
+            cardDev.setOnClickListener(v -> openUrl(GITHUB_PROFILE));
         }
 
-        TextView tvGithub = findViewById(R.id.tv_github);
-        if (tvGithub != null) {
-            tvGithub.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openUrl(GITHUB_REPO);
-                }
-            });
+        View cardGithub = findViewById(R.id.card_github);
+        if (cardGithub != null) {
+            cardGithub.setOnClickListener(v -> openUrl(GITHUB_REPO));
         }
     }
 
     private void openUrl(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    private void setupCopyright() {
+        TextView tvCopyright = findViewById(R.id.tv_copyright);
+        if (tvCopyright != null) {
+            tvCopyright.setText(getString(R.string.derechos_autor, getString(R.string.user_git)));
+        }
     }
 }

@@ -10,10 +10,12 @@ import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout tilesContainer;
     private HorizontalScrollView tilesScroll;
     private CombinedChart priceChart;
-    private ProgressBar progressBar;
-    private LinearLayout navHome;
-    private LinearLayout navAbout;
-    private ImageView navHomeIcon;
-    private ImageView navAboutIcon;
+    private View layoutSkeleton;
+    private View scrollView;
+    private View layoutError;
+    private android.widget.Button btnRetry;
+    private ImageButton btnThemeToggle;
     private ElectricityApiService apiService;
     private UpdateChecker updateChecker;
     private List<PrecioHora> preciosDelDia;
@@ -113,15 +115,31 @@ public class MainActivity extends AppCompatActivity {
         tilesContainer = findViewById(R.id.tiles_container);
         tilesScroll = findViewById(R.id.tiles_scroll);
         priceChart = findViewById(R.id.price_chart);
-        progressBar = findViewById(R.id.progress_bar);
+        layoutSkeleton = findViewById(R.id.layout_skeleton);
+        scrollView = findViewById(R.id.scroll_view);
+        layoutError = findViewById(R.id.layout_error);
+        btnRetry = findViewById(R.id.btn_retry);
+        btnThemeToggle = findViewById(R.id.btn_theme_toggle);
         
-        navHome = findViewById(R.id.nav_home);
-        navAbout = findViewById(R.id.nav_about);
-        navHomeIcon = findViewById(R.id.nav_home_icon);
-        navAboutIcon = findViewById(R.id.nav_about_icon);
+        startSkeletonAnimation();
         
-        setupNavIndicator();
-        setupNavClicks();
+        if (btnRetry != null) {
+            btnRetry.setOnClickListener(v -> cargarPrecios());
+        }
+
+        if (btnThemeToggle != null) {
+            actualizarIconoTema();
+            btnThemeToggle.setOnClickListener(v -> toggleTheme());
+        }
+
+        ImageButton btnInfo = findViewById(R.id.btn_info);
+        if (btnInfo != null) {
+            btnInfo.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            });
+        }
         
         setupChart();
         
@@ -131,26 +149,6 @@ public class MainActivity extends AppCompatActivity {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(insets.left, 0, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
-        });
-    }
-    
-    private void setupNavIndicator() {
-        navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
-        navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
-    }
-    
-    private void setupNavClicks() {
-        navHome.setOnClickListener(v -> {
-            navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
-            navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
-        });
-        
-        navAbout.setOnClickListener(v -> {
-            navHomeIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
-            navAboutIcon.setColorFilter(ContextCompat.getColor(this, R.color.metro_primary));
-            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         });
     }
     
@@ -172,13 +170,14 @@ public class MainActivity extends AppCompatActivity {
         XAxis xAxis = priceChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setTextColor(Color.GRAY);
+        xAxis.setTextColor(ContextCompat.getColor(this, R.color.text_muted));
         xAxis.setGranularity(1f);
         
         YAxis leftAxis = priceChart.getAxisLeft();
         leftAxis.setDrawGridLines(true);
-        leftAxis.setGridColor(Color.parseColor("#333333"));
-        leftAxis.setTextColor(Color.GRAY);
+        leftAxis.setGridColor(ContextCompat.getColor(this, R.color.border_subtle));
+        leftAxis.setTextColor(ContextCompat.getColor(this, R.color.text_muted));
+        leftAxis.setDrawAxisLine(false);
         
         priceChart.getAxisRight().setEnabled(false);
     }
@@ -264,32 +263,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
+    private void startSkeletonAnimation() {
+        Animation shimmer = AnimationUtils.loadAnimation(this, R.anim.shimmer);
+        layoutSkeleton.startAnimation(shimmer);
+    }
+
     private void cargarPrecios() {
-        progressBar.setVisibility(View.VISIBLE);
+        layoutSkeleton.setVisibility(View.VISIBLE);
+        scrollView.setVisibility(View.GONE);
+        layoutError.setVisibility(View.GONE);
+        startSkeletonAnimation();
         
         executorService.execute(() -> {
             try {
                 preciosDelDia = apiService.obtenerPreciosHoy();
                 
                 runOnUiThread(() -> {
-                    progressBar.setVisibility(View.GONE);
+                    layoutSkeleton.clearAnimation();
+                    layoutSkeleton.setVisibility(View.GONE);
+                    scrollView.setVisibility(View.VISIBLE);
                     
                     if (preciosDelDia != null && !preciosDelDia.isEmpty()) {
                         actualizarUI();
-                        errorCatcher.showSuccess("Data On.");
+                        errorCatcher.showSuccess(getString(R.string.datos_cargados));
                     } else {
-                        errorCatcher.captureApiError("Load Prices", "No data");
+                        mostrarError();
+                        errorCatcher.captureApiError("Load Prices", getString(R.string.sin_datos));
                     }
                 });
                 
             } catch (Exception e) {
                 SecureLogger.e(TAG, "Error: " + e.getMessage());
                 runOnUiThread(() -> {
-                    progressBar.setVisibility(View.GONE);
+                    mostrarError();
                     errorCatcher.captureError("Load Prices", e);
                 });
             }
         });
+    }
+
+    private void mostrarError() {
+        layoutSkeleton.clearAnimation();
+        layoutSkeleton.setVisibility(View.GONE);
+        scrollView.setVisibility(View.GONE);
+        layoutError.setVisibility(View.VISIBLE);
     }
     
     private void actualizarUI() {
@@ -316,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         
-        tvPrecioActual.setText("--,--");
+        tvPrecioActual.setText(getString(R.string.placeholder_precio));
     }
     
     private void actualizarResumen() {
@@ -324,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
         PrecioHora masCaro = apiService.obtenerPrecioMasAlto(preciosDelDia);
         PrecioHora masBarato = apiService.obtenerPrecioMasBajo(preciosDelDia);
         
-        tvPromedio.setText(String.format("%.3f €/kWh", promedio).replace(".", ","));
+        tvPromedio.setText(String.format("%.3f %s", promedio, getString(R.string.unidad_kwh)).replace(".", ","));
         
         if (masCaro != null) {
             tvMasCaro.setText(masCaro.getHora());
@@ -348,11 +365,11 @@ public class MainActivity extends AppCompatActivity {
         }
         
         BarDataSet barDataSet = new BarDataSet(barEntries, "Precios Bar");
-        barDataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary_dim));
+        barDataSet.setColor(ContextCompat.getColor(this, R.color.accent_primary_dim));
         barDataSet.setDrawValues(false);
         
         LineDataSet lineDataSet = new LineDataSet(lineEntries, "Precios Line");
-        lineDataSet.setColor(ContextCompat.getColor(this, R.color.metro_primary));
+        lineDataSet.setColor(ContextCompat.getColor(this, R.color.accent_primary));
         lineDataSet.setDrawCircles(false);
         lineDataSet.setLineWidth(3f);
         lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
@@ -401,10 +418,9 @@ public class MainActivity extends AppCompatActivity {
         if (currentHourIndex[0] >= 0) {
             int targetIndex = currentHourIndex[0];
             tilesScroll.post(() -> {
-                int tileWidth = dpToPx(108);
+                int tileWidth = dpToPx(116); // 104dp + 12dp margin
                 int scrollTo = targetIndex * tileWidth;
                 
-                // Scroll suave personalizado (1.5 segundos para un feeling premium)
                 ObjectAnimator animator = ObjectAnimator.ofInt(tilesScroll, "scrollX", scrollTo);
                 animator.setDuration(1500); 
                 animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
@@ -416,42 +432,55 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout crearTile(PrecioHora ph, String hora, boolean esActual, boolean esBarato, boolean esCaro) {
         LinearLayout tile = new LinearLayout(this);
         tile.setOrientation(LinearLayout.VERTICAL);
-        tile.setPadding(dpToPx(16), dpToPx(16), dpToPx(16), dpToPx(16));
+        tile.setPadding(dpToPx(16), dpToPx(20), dpToPx(16), dpToPx(20));
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                dpToPx(100), dpToPx(100));
-        params.setMargins(0, 0, dpToPx(8), 0);
+                dpToPx(104), LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, dpToPx(12), 0);
         tile.setLayoutParams(params);
         
         int bgColor;
         int textColor;
+        int strokeColor = ContextCompat.getColor(this, R.color.border_subtle);
         
         if (esActual) {
-            bgColor = ContextCompat.getColor(this, R.color.metro_primary);
+            bgColor = ContextCompat.getColor(this, R.color.accent_primary);
             textColor = Color.BLACK;
-        } else if (esBarato) {
-            bgColor = ContextCompat.getColor(this, R.color.price_barato_bg);
-            textColor = ContextCompat.getColor(this, R.color.price_barato);
-        } else if (esCaro) {
-            bgColor = ContextCompat.getColor(this, R.color.price_caro_bg);
-            textColor = ContextCompat.getColor(this, R.color.price_caro);
+            strokeColor = bgColor;
         } else {
-            bgColor = ContextCompat.getColor(this, R.color.metro_surface_tile);
-            textColor = ContextCompat.getColor(this, R.color.metro_text_secondary);
+            bgColor = ContextCompat.getColor(this, R.color.surface_card);
+            textColor = ContextCompat.getColor(this, R.color.text_primary);
         }
         
-        tile.setBackgroundColor(bgColor);
+        android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
+        shape.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+        shape.setCornerRadius(dpToPx(20));
+        shape.setColor(bgColor);
+        shape.setStroke(dpToPx(1), strokeColor);
+        tile.setBackground(shape);
         
         TextView label = new TextView(this);
-        label.setText(esActual ? "AHORA" : (esBarato ? "VALLE" : (esCaro ? "PUNTA" : "NORMAL")));
-        label.setTextSize(10);
-        label.setTextColor(esActual ? Color.BLACK : textColor);
+        String labelText;
+        if (esActual) {
+            labelText = getString(R.string.ahora);
+        } else if (ph.getPrecioKwh() < 0.13) {
+            labelText = getString(R.string.valle);
+        } else if (ph.getPrecioKwh() > 0.17) {
+            labelText = getString(R.string.punta);
+        } else {
+            labelText = getString(R.string.llano);
+        }
+        
+        label.setText(labelText);
+        label.setTextSize(9);
+        label.setTextColor(esActual ? Color.BLACK : ContextCompat.getColor(this, R.color.text_muted));
         label.setAllCaps(true);
+        label.setLetterSpacing(0.1f);
         label.setTypeface(null, android.graphics.Typeface.BOLD);
         
         TextView precio = new TextView(this);
-        precio.setText(String.format("%.3f", ph.getPrecioKwh()).replace(".", ","));
-        precio.setTextSize(20);
+        precio.setText(String.format(Locale.getDefault(), "%.3f", ph.getPrecioKwh()).replace(".", ","));
+        precio.setTextSize(18);
         precio.setTextColor(esActual ? Color.BLACK : textColor);
         precio.setTypeface(null, android.graphics.Typeface.BOLD);
         precio.setPadding(0, dpToPx(8), 0, 0);
@@ -459,17 +488,12 @@ public class MainActivity extends AppCompatActivity {
         TextView horaTv = new TextView(this);
         horaTv.setText(hora);
         horaTv.setTextSize(11);
-        horaTv.setTextColor(esActual ? Color.BLACK : textColor);
-        horaTv.setAlpha(0.7f);
-        horaTv.setPadding(0, dpToPx(4), 0, 0);
-        
-        LinearLayout priceContainer = new LinearLayout(this);
-        priceContainer.setOrientation(LinearLayout.VERTICAL);
-        priceContainer.addView(precio);
-        priceContainer.addView(horaTv);
+        horaTv.setTextColor(esActual ? Color.BLACK : ContextCompat.getColor(this, R.color.text_secondary));
+        horaTv.setPadding(0, dpToPx(2), 0, 0);
         
         tile.addView(label);
-        tile.addView(priceContainer);
+        tile.addView(precio);
+        tile.addView(horaTv);
         
         return tile;
     }
@@ -503,6 +527,26 @@ public class MainActivity extends AppCompatActivity {
         }
         if (updateChecker != null) {
             updateChecker.shutdown();
+        }
+    }
+
+    private void toggleTheme() {
+        int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+        } else {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+        }
+    }
+
+    private void actualizarIconoTema() {
+        int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (btnThemeToggle != null) {
+            if (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+                btnThemeToggle.setImageResource(R.drawable.ic_sun);
+            } else {
+                btnThemeToggle.setImageResource(R.drawable.ic_moon);
+            }
         }
     }
 }

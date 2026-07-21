@@ -83,8 +83,8 @@ public class NotificationScheduler {
      */
     public static void crearCanalNotificacion(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence nombre = "Precios de Electricidad";
-            String descripcion = "Notificaciones diarias con los precios de la luz";
+            CharSequence nombre = context.getString(R.string.notif_canal_nombre);
+            String descripcion = context.getString(R.string.notif_canal_descripcion);
             int importancia = NotificationManager.IMPORTANCE_DEFAULT;
             
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, nombre, importancia);
@@ -123,8 +123,8 @@ public class NotificationScheduler {
         String precioCaroFormateado = String.format("%.4f", masCaro.getPrecioKwh()).replace(".", ",");
         String precioBaratoFormateado = String.format("%.4f", masBarato.getPrecioKwh()).replace(".", ",");
         
-        String contenido = "🔴 Más caro: " + rangoCaro + " - " + precioCaroFormateado + " €/kWh\n" +
-                          "🟢 Más barato: " + rangoBarato + " - " + precioBaratoFormateado + " €/kWh";
+        String contenido = context.getString(R.string.notif_mas_caro) + " " + rangoCaro + " - " + precioCaroFormateado + " " + context.getString(R.string.unidad_kwh) + "\n" +
+                          context.getString(R.string.notif_mas_barato) + " " + rangoBarato + " - " + precioBaratoFormateado + " " + context.getString(R.string.unidad_kwh);
         
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -137,8 +137,8 @@ public class NotificationScheduler {
         
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("⚡ Precios de la Luz")
-                .setContentText("Más caro: " + precioCaroFormateado + " - Más barato: " + precioBaratoFormateado)
+                .setContentTitle(context.getString(R.string.notif_titulo))
+                .setContentText(context.getString(R.string.maximo) + ": " + precioCaroFormateado + " - " + context.getString(R.string.minimo) + ": " + precioBaratoFormateado)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contenido))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
