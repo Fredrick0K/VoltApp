@@ -217,113 +217,13 @@ public class UpdateChecker {
     }
 
     private void downloadAndInstall(final String downloadUrl) {
-        ComponentActivity activity = activityRef.get();
-        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
-            SecureLogger.d(TAG, "Activity not available, cannot show progress");
-            return;
-        }
-
-        final ProgressDialog progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage(context.getString(R.string.descargando_update));
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    File apkFile = downloadApk(downloadUrl);
-                    if (apkFile != null && apkFile.exists()) {
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
-                                installApk(apkFile);
-                            }
-                        });
-                    } else {
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
-                                Toast.makeText(context, context.getString(R.string.error_descarga), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                } catch (final Exception e) {
-                    SecureLogger.e(TAG, "Download error: " + e.getMessage());
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (progressDialog.isShowing()) {
-                                progressDialog.dismiss();
-                            }
-                            Toast.makeText(context, context.getString(R.string.error_prefijo) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private File downloadApk(String downloadUrl) throws Exception {
-        URL url = new URL(downloadUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(30000);
-        connection.setReadTimeout(30000);
-
-        int responseCode = connection.getResponseCode();
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            throw new Exception("HTTP " + responseCode);
-        }
-
-        String fileName = "volt_update.apk";
-        File outputDir = new File(context.getCacheDir(), "updates");
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        File outputFile = new File(outputDir, fileName);
-
-        java.io.InputStream input = connection.getInputStream();
-        FileOutputStream output = new FileOutputStream(outputFile);
-
-        byte[] buffer = new byte[8192];
-        int count;
-        while ((count = input.read(buffer)) != -1) {
-            output.write(buffer, 0, count);
-        }
-
-        output.close();
-        input.close();
-        connection.disconnect();
-
-        SecureLogger.d(TAG, "Download complete: " + outputFile.length() + " bytes");
-        return outputFile;
-    }
-
-    private void installApk(File apkFile) {
         try {
-            Uri apkUri = FileProvider.getUriForFile(
-                    context,
-                    FILE_PROVIDER_AUTHORITY,
-                    apkFile
-            );
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             context.startActivity(intent);
         } catch (Exception e) {
-            SecureLogger.e(TAG, "Install error: " + e.getMessage());
-            Toast.makeText(context, context.getString(R.string.error_instalacion), Toast.LENGTH_SHORT).show();
+            SecureLogger.e(TAG, "Error opening update URL: " + e.getMessage());
+            Toast.makeText(context, context.getString(R.string.error_prefijo) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

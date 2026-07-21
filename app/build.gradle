@@ -5,9 +5,7 @@ plugins {
 
 android {
     namespace 'com.titanium.lightdex'
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk 35
 
     buildFeatures {
         buildConfig true
@@ -16,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.titanium.lightdex"
         minSdk 24
-        targetSdk 36
+        targetSdk 35
         versionCode 13
         versionName "v1.2.6"
 
