@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
-
-import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +33,7 @@ public class UpdateChecker {
     private static final String TAG = "UpdateChecker";
     private static final String GITHUB_API_URL = "https://api.github.com/repos/%s/%s/releases/latest";
     private static final String FILE_PROVIDER_AUTHORITY = "com.titanium.lightdex.fileprovider";
-    private static final String APK_FILE_NAME = "update.apk";
+    private static final String APK_FILE_NAME = "volt_update.apk";
 
     private final String userAgent;
     private final WeakReference<ComponentActivity> activityRef;
@@ -67,13 +64,6 @@ public class UpdateChecker {
             try {
                 SecureLogger.d(TAG, "=== Update Check Started ===");
                 
-                // Patch security provider
-                try {
-                    ProviderInstaller.installIfNeeded(context);
-                } catch (Exception e) {
-                    SecureLogger.w(TAG, "Security provider update failed: " + e.getMessage());
-                }
-
                 ReleaseInfo releaseInfo = fetchReleaseInfo();
                 if (releaseInfo == null) return;
 
@@ -183,7 +173,9 @@ public class UpdateChecker {
         progressDialog.show();
 
         executor.execute(() -> {
-            File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), APK_FILE_NAME);
+            File outputDir = new File(context.getCacheDir(), "updates");
+            if (!outputDir.exists()) outputDir.mkdirs();
+            File apkFile = new File(outputDir, APK_FILE_NAME);
             Request request = new Request.Builder().url(downloadUrl).header("User-Agent", userAgent).build();
 
             try (Response response = client.newCall(request).execute()) {
