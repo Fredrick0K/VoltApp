@@ -1,22 +1,24 @@
 package com.titanium.lightdex;
 
-import android.animation.ObjectAnimator;
 import android.Manifest;
-import android.content.pm.PackageManager;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,6 +27,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -89,8 +93,15 @@ public class MainActivity extends AppCompatActivity {
         SecureLogger.init(this);
         
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setStatusBarColor(Color.BLACK);
-        getWindow().setNavigationBarColor(Color.BLACK);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setStatusBarContrastEnforced(false);
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+
+        actualizarAparienciaBarras();
         
         setContentView(R.layout.activity_main);
         
@@ -147,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
     }
@@ -392,6 +403,20 @@ public class MainActivity extends AppCompatActivity {
     private void crearTiles() {
         tilesContainer.removeAllViews();
         
+        if (preciosDelDia == null || preciosDelDia.isEmpty()) return;
+
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        for (PrecioHora ph : preciosDelDia) {
+            double p = ph.getPrecioKwh();
+            if (p < min) min = p;
+            if (p > max) max = p;
+        }
+
+        double range = max - min;
+        double thresholdLow = min + (range / 3.0);
+        double thresholdHigh = min + (2.0 * range / 3.0);
+
         int horaActual = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         
         final int[] currentHourIndex = {-1};
@@ -408,8 +433,8 @@ public class MainActivity extends AppCompatActivity {
             boolean esActual = (hora == horaActual);
             if (esActual) currentHourIndex[0] = i;
             
-            boolean esBarato = ph.getPrecioKwh() < 0.13;
-            boolean esCaro = ph.getPrecioKwh() > 0.17;
+            boolean esBarato = ph.getPrecioKwh() <= thresholdLow;
+            boolean esCaro = ph.getPrecioKwh() >= thresholdHigh;
             
             LinearLayout tile = crearTile(ph, horaStr, esActual, esBarato, esCaro);
             tilesContainer.addView(tile);
@@ -440,16 +465,27 @@ public class MainActivity extends AppCompatActivity {
         tile.setLayoutParams(params);
         
         int bgColor;
-        int textColor;
-        int strokeColor = ContextCompat.getColor(this, R.color.border_subtle);
+        int textColor = ContextCompat.getColor(this, R.color.text_primary);
+        int strokeColor;
+        int labelColor;
         
         if (esActual) {
             bgColor = ContextCompat.getColor(this, R.color.accent_primary);
             textColor = Color.BLACK;
             strokeColor = bgColor;
+            labelColor = Color.BLACK;
+        } else if (esBarato) {
+            bgColor = ContextCompat.getColor(this, R.color.price_low_bg);
+            strokeColor = ContextCompat.getColor(this, R.color.price_low);
+            labelColor = strokeColor;
+        } else if (esCaro) {
+            bgColor = ContextCompat.getColor(this, R.color.price_high_bg);
+            strokeColor = ContextCompat.getColor(this, R.color.price_high);
+            labelColor = strokeColor;
         } else {
-            bgColor = ContextCompat.getColor(this, R.color.surface_card);
-            textColor = ContextCompat.getColor(this, R.color.text_primary);
+            bgColor = ContextCompat.getColor(this, R.color.price_mid_bg);
+            strokeColor = ContextCompat.getColor(this, R.color.price_mid);
+            labelColor = strokeColor;
         }
         
         android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
@@ -463,9 +499,9 @@ public class MainActivity extends AppCompatActivity {
         String labelText;
         if (esActual) {
             labelText = getString(R.string.ahora);
-        } else if (ph.getPrecioKwh() < 0.13) {
+        } else if (esBarato) {
             labelText = getString(R.string.valle);
-        } else if (ph.getPrecioKwh() > 0.17) {
+        } else if (esCaro) {
             labelText = getString(R.string.punta);
         } else {
             labelText = getString(R.string.llano);
@@ -473,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
         
         label.setText(labelText);
         label.setTextSize(9);
-        label.setTextColor(esActual ? Color.BLACK : ContextCompat.getColor(this, R.color.text_muted));
+        label.setTextColor(labelColor);
         label.setAllCaps(true);
         label.setLetterSpacing(0.1f);
         label.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -481,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
         TextView precio = new TextView(this);
         precio.setText(String.format(Locale.getDefault(), "%.3f", ph.getPrecioKwh()).replace(".", ","));
         precio.setTextSize(18);
-        precio.setTextColor(esActual ? Color.BLACK : textColor);
+        precio.setTextColor(textColor);
         precio.setTypeface(null, android.graphics.Typeface.BOLD);
         precio.setPadding(0, dpToPx(8), 0, 0);
         
@@ -530,6 +566,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void actualizarAparienciaBarras() {
+        int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        boolean isNightMode = (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES);
+        
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!isNightMode);
+        controller.setAppearanceLightNavigationBars(!isNightMode);
+    }
+
     private void toggleTheme() {
         int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
         if (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
@@ -537,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
         }
+        actualizarAparienciaBarras();
     }
 
     private void actualizarIconoTema() {

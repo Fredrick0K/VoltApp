@@ -23,37 +23,37 @@ public class SecureLogger {
     }
     
     public static void d(String tag, String message) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.d(tag, message);
         }
     }
     
     public static void i(String tag, String message) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.i(tag, message);
         }
     }
     
     public static void w(String tag, String message) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.w(tag, message);
         }
     }
     
     public static void e(String tag, String message) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.e(tag, message);
         }
     }
     
     public static void e(String tag, String message, Throwable tr) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.e(tag, message, tr);
         }
     }
 
     public static void error(String tag, String message) {
-        if (isDebuggable != null && isDebuggable) {
+        if (Boolean.TRUE.equals(isDebuggable)) {
             Log.e(tag, message);
         }
     }

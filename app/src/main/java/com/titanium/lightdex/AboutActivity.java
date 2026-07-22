@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -26,8 +28,15 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setStatusBarColor(Color.BLACK);
-        getWindow().setNavigationBarColor(Color.BLACK);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setStatusBarContrastEnforced(false);
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+
+        actualizarAparienciaBarras();
         
         setContentView(R.layout.page_about);
         
@@ -98,5 +107,15 @@ public class AboutActivity extends AppCompatActivity {
         if (tvCopyright != null) {
             tvCopyright.setText(getString(R.string.derechos_autor, getString(R.string.user_git)));
         }
+    }
+
+    private void actualizarAparienciaBarras() {
+        int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        boolean isNightMode = (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES);
+        
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!isNightMode);
+        controller.setAppearanceLightNavigationBars(!isNightMode);
     }
 }
