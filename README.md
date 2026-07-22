@@ -3,6 +3,13 @@
 
 # VOLT$ 
 
+Android App that tells you electricity prices of the day. Only For Spain.
+
+## Quick Peek
+
+<img width="340" height="720" alt="image" src="https://github.com/user-attachments/assets/74ebd146-b8d5-4160-bc22-d8f1be27be3d" />
+
+
 ## Installation
 
 [![Download](https://img.shields.io/github/v/release/Fredrick0K/VoltApp?label=Download&style=for-the-badge&color=1C30A3&logo=android&logoColor=#3DDC84)](https://github.com/Fredrick0K/VoltApp/releases/download/v1.2.7/app-release.apk)
