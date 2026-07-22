@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,6 +43,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
+import com.google.android.gms.security.ProviderInstaller;
 import com.titanium.lightdex.models.PrecioHora;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private View layoutSkeleton;
     private View scrollView;
     private View layoutError;
-    private android.widget.Button btnRetry;
+    private Button btnRetry;
     private ImageButton btnThemeToggle;
     private ElectricityApiService apiService;
     private UpdateChecker updateChecker;
@@ -90,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        try {
+            ProviderInstaller.installIfNeeded(this);
+        } catch (Exception e) {
+            SecureLogger.w(TAG, "GMS Provider install failed: " + e.getMessage());
+        }
+
         SecureLogger.init(this);
         
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);

@@ -36,17 +36,6 @@
     <string name="llano">LLANO</string>
     <string name="punta">PUNTA</string>
 
-    <!-- Permisos -->
-    <string name="permiso_ubicacion_titulo">Ubicación necesaria</string>
-    <string name="permiso_ubicacion_mensaje">Para mostrar los precios de tu zona necesitamos acceso a tu ubicación.</string>
-    <string name="permiso_notificaciones_titulo">Notificaciones</string>
-    <string name="permiso_notificaciones_mensaje">Permite notificaciones para recibir avisos diarios de precios.</string>
-    
-    <!-- Notificaciones -->
-    <string name="notif_titulo">⚡ Precios de la Luz Hoy</string>
-    <string name="notif_canal_nombre">Precios Diarios</string>
-    <string name="notif_canal_descripcion">Notificaciones diarias con resumen de precios</string>
-
     <string name="update_available_title">Nueva versión disponible</string>
     <string name="update_available_msg">La versión %1$s está disponible. ¿Deseas actualizar ahora?</string>
     <string name="actualizar">Actualizar</string>
@@ -54,9 +43,6 @@
     <string name="descargando_update">Descargando actualización…</string>
     <string name="error_descarga">Error al descargar</string>
     <string name="error_instalacion">No se pudo iniciar la instalación</string>
-
-    <string name="notif_mas_caro">🔴 Más caro:</string>
-    <string name="notif_mas_barato">🟢 Más barato:</string>
 
     <string name="user_git">Fredrick0K</string>
 </resources>

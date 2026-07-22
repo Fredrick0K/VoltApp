@@ -3,15 +3,24 @@ package com.titanium.lightdex;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.google.android.gms.security.ProviderInstaller;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import androidx.activity.ComponentActivity;
 import androidx.core.content.FileProvider;
@@ -19,28 +28,24 @@ import androidx.core.content.FileProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class UpdateChecker {
     private static final String TAG = "UpdateChecker";
     private static final String GITHUB_API_URL = "https://api.github.com/repos/%s/%s/releases/latest";
     private static final String FILE_PROVIDER_AUTHORITY = "com.titanium.lightdex.fileprovider";
+    private static final String APK_FILE_NAME = "update.apk";
 
-    private String userAgent;
-    private WeakReference<ComponentActivity> activityRef;
-
+    private final String userAgent;
+    private final WeakReference<ComponentActivity> activityRef;
     private final Context context;
     private final String githubUser;
     private final String repoName;
     private final Handler mainHandler;
     private final ExecutorService executor;
+    private final OkHttpClient client;
 
     public UpdateChecker(ComponentActivity activity, String githubUser, String repoName) {
         this.context = activity.getApplicationContext();
@@ -49,197 +54,191 @@ public class UpdateChecker {
         this.repoName = repoName;
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.executor = Executors.newSingleThreadExecutor();
-        this.userAgent = "VoltApp-Android/" + getCurrentVersion();
+        this.userAgent = "VoltApp/" + getCurrentVersion() + " (Android; +https://github.com/Fredrick0K/VoltApp)";
+        
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
     }
 
     public void checkForUpdate() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
+        executor.execute(() -> {
+            try {
+                SecureLogger.d(TAG, "=== Update Check Started ===");
+                
+                // Patch security provider
                 try {
-                    SecureLogger.d(TAG, "=== Update Check Started ===");
-
-                    ReleaseInfo releaseInfo = fetchReleaseInfo();
-                    if (releaseInfo == null) {
-                        SecureLogger.e(TAG, "Could not fetch release info");
-                        return;
-                    }
-
-                    String currentVersion = getCurrentVersion();
-                    SecureLogger.i(TAG, "Current version: " + currentVersion);
-                    SecureLogger.i(TAG, "Latest version: " + releaseInfo.version);
-
-                    boolean needsUpdate = isNewerVersion(releaseInfo.version, currentVersion);
-                    SecureLogger.i(TAG, "Update needed: " + needsUpdate);
-
-                    if (needsUpdate) {
-                        SecureLogger.i(TAG, "Update available! Showing dialog...");
-                        final ReleaseInfo info = releaseInfo;
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                showUpdateDialog(info);
-                            }
-                        });
-                    } else {
-                        SecureLogger.d(TAG, "App is up to date - no action needed");
-                    }
-
-                    SecureLogger.d(TAG, "=== Update Check Complete ===");
+                    ProviderInstaller.installIfNeeded(context);
                 } catch (Exception e) {
-                    SecureLogger.e(TAG, "Error checking for updates: " + e.getMessage());
+                    SecureLogger.w(TAG, "Security provider update failed: " + e.getMessage());
                 }
+
+                ReleaseInfo releaseInfo = fetchReleaseInfo();
+                if (releaseInfo == null) return;
+
+                String currentVersion = getCurrentVersion();
+                if (isNewerVersion(releaseInfo.version, currentVersion)) {
+                    mainHandler.post(() -> showUpdateDialog(releaseInfo));
+                }
+
+                SecureLogger.d(TAG, "=== Update Check Complete ===");
+            } catch (Exception e) {
+                SecureLogger.e(TAG, "Error checking updates: " + e.getMessage());
             }
         });
     }
 
     private ReleaseInfo fetchReleaseInfo() throws Exception {
         String apiUrl = String.format(GITHUB_API_URL, githubUser, repoName);
-        URL url = new URL(apiUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
-        connection.setRequestProperty("User-Agent", userAgent);
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        Request request = new Request.Builder()
+                .url(apiUrl)
+                .header("Accept", "application/vnd.github.v3+json")
+                .header("User-Agent", userAgent)
+                .build();
 
-        int responseCode = connection.getResponseCode();
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-
-            return parseReleaseResponse(response.toString());
-        } else {
-            SecureLogger.w(TAG, "GitHub API returned: " + responseCode);
-            return null;
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) return null;
+            return parseReleaseResponse(response.body().string());
         }
     }
 
     private ReleaseInfo parseReleaseResponse(String jsonString) throws Exception {
         JSONObject jsonResponse = new JSONObject(jsonString);
-
         String tagName = jsonResponse.getString("tag_name");
-        tagName = tagName.startsWith("v") ? tagName.substring(1) : tagName;
-        tagName = tagName.split("-")[0];
-
+        String version = tagName.startsWith("v") ? tagName.substring(1) : tagName;
+        
         String downloadUrl = null;
-        JSONArray assets = jsonResponse.getJSONArray("assets");
-        for (int i = 0; i < assets.length(); i++) {
-            JSONObject asset = assets.getJSONObject(i);
-            String name = asset.getString("name");
-            if (name.endsWith(".apk")) {
-                downloadUrl = asset.getString("browser_download_url");
-                break;
+        JSONArray assets = jsonResponse.optJSONArray("assets");
+        if (assets != null) {
+            for (int i = 0; i < assets.length(); i++) {
+                JSONObject asset = assets.getJSONObject(i);
+                if (asset.getString("name").toLowerCase().endsWith(".apk")) {
+                    downloadUrl = asset.getString("browser_download_url");
+                    break;
+                }
             }
         }
-
-        if (downloadUrl == null) {
-            downloadUrl = jsonResponse.getString("html_url");
-        }
-
-        return new ReleaseInfo(tagName, downloadUrl);
+        
+        if (downloadUrl == null) downloadUrl = jsonResponse.getString("html_url");
+        return new ReleaseInfo(version, downloadUrl);
     }
 
     private String getCurrentVersion() {
         try {
-            return context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0).versionName;
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "1.0";
+            return "1.0.0";
         }
     }
 
-    private boolean isNewerVersion(String latestVersion, String currentVersion) {
+    private boolean isNewerVersion(String latest, String current) {
         try {
-            latestVersion = latestVersion.startsWith("v") ? latestVersion.substring(1) : latestVersion;
-            currentVersion = currentVersion.startsWith("v") ? currentVersion.substring(1) : currentVersion;
-
-            String[] latestParts = latestVersion.split("\\.");
-            String[] currentParts = currentVersion.split("\\.");
-
-            int maxLength = Math.max(latestParts.length, currentParts.length);
-
-            SecureLogger.d(TAG, "Comparing versions - Latest: " + latestVersion + ", Current: " + currentVersion);
-
-            for (int i = 0; i < maxLength; i++) {
-                int latest = i < latestParts.length ?
-                        Integer.parseInt(latestParts[i]) : 0;
-                int current = i < currentParts.length ?
-                        Integer.parseInt(currentParts[i]) : 0;
-
-                SecureLogger.d(TAG, "Part[" + i + "] - Latest: " + latest + ", Current: " + current);
-
-                if (latest > current) {
-                    SecureLogger.d(TAG, "Latest is newer - returning true");
-                    return true;
-                }
-                if (latest < current) {
-                    SecureLogger.d(TAG, "Current is newer - returning false");
-                    return false;
-                }
+            String[] v1 = (latest.startsWith("v") ? latest.substring(1) : latest).split("\\.");
+            String[] v2 = (current.startsWith("v") ? current.substring(1) : current).split("\\.");
+            int len = Math.max(v1.length, v2.length);
+            for (int i = 0; i < len; i++) {
+                int n1 = i < v1.length ? Integer.parseInt(v1[i].split("-")[0]) : 0;
+                int n2 = i < v2.length ? Integer.parseInt(v2[i].split("-")[0]) : 0;
+                if (n1 > n2) return true;
+                if (n1 < n2) return false;
             }
-            SecureLogger.d(TAG, "Versions are equal - returning false");
-            return false;
-        } catch (NumberFormatException e) {
-            SecureLogger.e(TAG, "Error parsing version: " + e.getMessage());
-            return false;
-        }
+        } catch (Exception ignored) {}
+        return false;
     }
 
     private void showUpdateDialog(final ReleaseInfo releaseInfo) {
         ComponentActivity activity = activityRef.get();
-        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
-            SecureLogger.d(TAG, "Activity not available, skipping dialog");
-            return;
-        }
+        if (activity == null || activity.isFinishing()) return;
 
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle(context.getString(R.string.update_available_title))
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.update_available_title)
                 .setMessage(context.getString(R.string.update_available_msg, releaseInfo.version))
-                .setPositiveButton(context.getString(R.string.actualizar), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        downloadAndInstall(releaseInfo.downloadUrl);
-                    }
+                .setPositiveButton(R.string.actualizar, (d, w) -> {
+                    if (releaseInfo.downloadUrl.endsWith(".apk")) startDownload(releaseInfo.downloadUrl);
+                    else openInBrowser(releaseInfo.downloadUrl);
                 })
-                .setNegativeButton(context.getString(R.string.mas_tarde), null)
-                .setCancelable(true)
-                .create();
-
-        dialog.show();
+                .setNegativeButton(R.string.mas_tarde, null)
+                .show();
     }
 
-    private void downloadAndInstall(final String downloadUrl) {
+    private void openInBrowser(String url) {
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } catch (Exception e) {
-            SecureLogger.e(TAG, "Error opening update URL: " + e.getMessage());
-            Toast.makeText(context, context.getString(R.string.error_prefijo) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            SecureLogger.e(TAG, "Error opening browser");
+        }
+    }
+
+    private void startDownload(final String downloadUrl) {
+        ComponentActivity activity = activityRef.get();
+        if (activity == null) return;
+
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
+        progressDialog.setTitle(R.string.descargando_update);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        executor.execute(() -> {
+            File apkFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), APK_FILE_NAME);
+            Request request = new Request.Builder().url(downloadUrl).header("User-Agent", userAgent).build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful() || response.body() == null) throw new IOException("Download failed");
+
+                long totalSize = response.body().contentLength();
+                try (InputStream is = response.body().byteStream();
+                     FileOutputStream fos = new FileOutputStream(apkFile)) {
+                    
+                    byte[] buffer = new byte[8192];
+                    long downloaded = 0;
+                    int read;
+                    while ((read = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, read);
+                        downloaded += read;
+                        if (totalSize > 0) {
+                            int progress = (int) (downloaded * 100 / totalSize);
+                            mainHandler.post(() -> progressDialog.setProgress(progress));
+                        }
+                    }
+                    fos.flush();
+                }
+
+                mainHandler.post(() -> {
+                    progressDialog.dismiss();
+                    installApk(apkFile);
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(context, R.string.error_descarga, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void installApk(File apkFile) {
+        try {
+            Uri apkUri = FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, apkFile);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.error_instalacion, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void shutdown() {
-        if (executor != null && !executor.isShutdown()) {
-            executor.shutdown();
-        }
+        if (!executor.isShutdown()) executor.shutdown();
     }
 
     private static class ReleaseInfo {
         final String version;
         final String downloadUrl;
-
-        ReleaseInfo(String version, String downloadUrl) {
-            this.version = version;
-            this.downloadUrl = downloadUrl;
-        }
+        ReleaseInfo(String v, String u) { this.version = v; this.downloadUrl = u; }
     }
 }

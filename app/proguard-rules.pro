@@ -1,20 +1,15 @@
-# ProGuard rules for Thunder App - Security Hardening
+# ProGuard rules for VoltApp
 
 # Keep model classes
 -keep class com.titanium.lightdex.models.** { *; }
 
-# Keep API service (Retrofit needs this)
+# Keep API service
 -keep class com.titanium.lightdex.ElectricityApiService { *; }
 
-# Keep MainActivity and other activities
+# Keep activities
 -keep class com.titanium.lightdex.MainActivity { *; }
--keep class com.titanium.lightdex.NotificationScheduler { *; }
--keep class com.titanium.lightdex.NotificationScheduler$* { *; }
+-keep class com.titanium.lightdex.AboutActivity { *; }
 -keep class com.titanium.lightdex.ErrorCatcher { *; }
-
-# Keep HoraAdapter for RecyclerView
--keep class com.titanium.lightdex.HoraAdapter { *; }
--keep class com.titanium.lightdex.HoraAdapter$* { *; }
 
 # General Android rules
 -keepattributes *Annotation*
@@ -23,7 +18,7 @@
 -keepattributes InnerClasses
 -keepattributes EnclosingMethod
 
-# Remove logging in release - SECURITY IMPROVEMENT
+# Remove logging in release
 -assumenosideeffects class android.util.Log {
     public static int v(...);
     public static int d(...);
@@ -32,7 +27,7 @@
     public static int e(...);
 }
 
-# Also remove System.out and printStackTrace
+# Remove System.out and printStackTrace
 -assumenosideeffects class java.io.PrintStream {
     public void println(...);
     public void print(...);
@@ -42,15 +37,9 @@
     public void printStackTrace();
 }
 
-# Retrofit and OkHttp
--keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes Exceptions
--dontwarn retrofit2.**
-
-# Gson
--keep class com.google.gson.** { *; }
--dontwarn com.google.gson.**
+# OkHttp
+-dontwarn okhttp3.**
+-dontwarn okio.**
 
 # Google Play Services
 -keep class com.google.android.gms.** { *; }

@@ -25,23 +25,7 @@
     <color name="price_high_bg">#1AD50000</color>
     
     <color name="border_subtle">#EEEEEE</color>
-
-    <!-- Legacy aliases to prevent breakage -->
-    <color name="metro_primary">@color/accent_primary</color>
-    <color name="metro_primary_dim">@color/accent_primary_dim</color>
-    <color name="metro_background">@color/bg_main</color>
-    <color name="metro_surface">@color/surface_card</color>
-    <color name="metro_surface_tile">@color/surface_card</color>
-    <color name="metro_text_primary">@color/text_primary</color>
-    <color name="metro_text_secondary">@color/text_secondary</color>
-    <color name="metro_text_muted">@color/text_muted</color>
-    <color name="metro_border">@color/border_subtle</color>
-
-    <color name="price_barato">@color/price_low</color>
-    <color name="price_caro">@color/price_high</color>
-    <color name="price_barato_bg">@color/price_low_bg</color>
-    <color name="price_caro_bg">@color/price_high_bg</color>
-
+    
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 </resources>

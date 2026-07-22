@@ -8,10 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import java.util.concurrent.TimeUnit;
+import com.google.android.gms.security.ProviderInstaller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,9 +29,14 @@ public class ElectricityApiService {
     private static final String BASE_URL = "https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real";
     
     private Context context;
+    private final OkHttpClient client;
     
     public ElectricityApiService(Context context) {
         this.context = context;
+        this.client = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .build();
     }
     
     /**
@@ -44,6 +50,13 @@ public class ElectricityApiService {
         List<PrecioHora> precios = new ArrayList<>();
         
         try {
+            // Asegurar que el proveedor de seguridad esté actualizado (GMS Core)
+            try {
+                ProviderInstaller.installIfNeeded(context);
+            } catch (Exception e) {
+                SecureLogger.w(TAG, "No se pudo actualizar el proveedor de seguridad: " + e.getMessage());
+            }
+
             // Obtener fecha actual en formato yyyy-MM-dd
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String fechaHoy = dateFormat.format(new Date());
@@ -54,53 +67,38 @@ public class ElectricityApiService {
                     "&end_date=" + fechaHoy + "T23:59" +
                     "&time_trunc=hour";
             
-            SecureLogger.d(TAG, "Consultando API");
+            SecureLogger.d(TAG, "Consultando API con OkHttp");
             
-            // Realizar petición HTTP
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10000); // 10 segundos timeout
-            connection.setReadTimeout(10000);
-            
-            // Leer la respuesta
-            int responseCode = connection.getResponseCode();
-            
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
+            Request request = new Request.Builder()
+                    .url(urlString)
+                    .header("User-Agent", "VoltApp/1.0 (Android; +https://github.com/Fredrick0K/VoltApp)")
+                    .header("Accept", "application/json")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    precios = procesarRespuestaJSON(responseData, fechaHoy);
+                    
+                    SecureLogger.d(TAG, "Precios obtenidos: " + precios.size());
+                    
+                    if (precios.isEmpty()) {
+                        throw new Exception(context.getString(R.string.sin_datos));
+                    }
+                } else {
+                    String errorMsg = context.getString(R.string.error_prefijo) + " HTTP " + response.code();
+                    SecureLogger.error(TAG, errorMsg);
+                    throw new Exception(errorMsg);
                 }
-                reader.close();
-                
-                // Procesar el JSON
-                precios = procesarRespuestaJSON(response.toString(), fechaHoy);
-                
-                SecureLogger.d(TAG, "Precios obtenidos: " + precios.size());
-                
-                if (precios.isEmpty()) {
-                    throw new Exception(context.getString(R.string.sin_datos));
-                }
-                
-            } else {
-                String errorMsg = context.getString(R.string.error_prefijo) + " HTTP " + responseCode;
-                SecureLogger.error(TAG, errorMsg);
-                throw new Exception(errorMsg);
             }
-            
-            connection.disconnect();
             
         } catch (java.net.SocketTimeoutException e) {
             throw new Exception(context.getString(R.string.error_conexion));
         } catch (java.net.UnknownHostException e) {
             throw new Exception(context.getString(R.string.error_conexion));
         } catch (Exception e) {
-            SecureLogger.error(TAG, "Error al obtener precios");
-            throw new Exception(context.getString(R.string.error_conexion) + " " + e.getMessage());
+            SecureLogger.error(TAG, "Error al obtener precios: " + e.getMessage());
+            throw new Exception(context.getString(R.string.error_conexion) + " " + (e.getMessage() != null ? e.getMessage() : ""));
         }
         
         return precios;
