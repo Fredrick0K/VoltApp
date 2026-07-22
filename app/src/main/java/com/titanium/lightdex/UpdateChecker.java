@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,10 @@ public class UpdateChecker {
     private static final String GITHUB_API_URL = "https://api.github.com/repos/%s/%s/releases/latest";
     private static final String FILE_PROVIDER_AUTHORITY = "com.titanium.lightdex.fileprovider";
     private static final String APK_FILE_NAME = "volt_update.apk";
+    private static final String EXPECTED_PACKAGE = "com.titanium.lightdex";
+    private static final String ALLOWED_HOST_GITHUB = "github.com";
+    private static final String ALLOWED_HOST_CDN = "objects.githubusercontent.com";
+    private static final String ALLOWED_HOST_API = "api.github.com";
 
     private final String userAgent;
     private final WeakReference<ComponentActivity> activityRef;
@@ -166,6 +172,14 @@ public class UpdateChecker {
         ComponentActivity activity = activityRef.get();
         if (activity == null) return;
 
+        if (!isTrustedDownloadUrl(downloadUrl)) {
+            SecureLogger.e(TAG, "Rejected untrusted download URL: " + downloadUrl);
+            mainHandler.post(() ->
+                Toast.makeText(context, "URL de descarga no válida", Toast.LENGTH_SHORT).show()
+            );
+            return;
+        }
+
         final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setTitle(R.string.descargando_update);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -201,7 +215,13 @@ public class UpdateChecker {
 
                 mainHandler.post(() -> {
                     progressDialog.dismiss();
-                    installApk(apkFile);
+                    if (verifyApkPackage(apkFile)) {
+                        installApk(apkFile);
+                    } else {
+                        SecureLogger.e(TAG, "APK package verification failed");
+                        Toast.makeText(context, "El APK no corresponde a esta aplicación", Toast.LENGTH_SHORT).show();
+                        apkFile.delete();
+                    }
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
@@ -210,6 +230,36 @@ public class UpdateChecker {
                 });
             }
         });
+    }
+
+    private boolean isTrustedDownloadUrl(String urlString) {
+        try {
+            URI uri = new URI(urlString);
+            String host = uri.getHost();
+            if (host == null) return false;
+
+            if (host.equals(ALLOWED_HOST_GITHUB) || host.equals(ALLOWED_HOST_CDN)) {
+                String path = uri.getPath();
+                if (path != null && path.contains("/Fredrick0K/VoltApp/")) return true;
+            }
+
+            SecureLogger.e(TAG, "Untrusted host: " + host);
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
+
+    private boolean verifyApkPackage(File apkFile) {
+        try {
+            android.content.pm.PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageArchiveInfo(apkFile.getAbsolutePath(), 0);
+            if (packageInfo == null) return false;
+            return EXPECTED_PACKAGE.equals(packageInfo.packageName);
+        } catch (Exception e) {
+            SecureLogger.e(TAG, "Package verification error: " + e.getMessage());
+            return false;
+        }
     }
 
     private void installApk(File apkFile) {
