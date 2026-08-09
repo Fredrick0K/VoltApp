@@ -9,11 +9,12 @@
     android:background="@color/bg_main"
     tools:context=".MainActivity">
 
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="20dp"
+            android:fillViewport="true"
         android:scrollbars="none"
         android:visibility="gone"
         android:clipToPadding="false">
