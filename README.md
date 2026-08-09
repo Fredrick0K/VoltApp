@@ -12,7 +12,7 @@ Android App that tells you electricity prices of the day. Only For Spain.
 
 ## Installation
 
-[![Download](https://img.shields.io/github/v/release/Fredrick0K/VoltApp?label=Download&style=for-the-badge&color=1C30A3&logo=android&logoColor=#3DDC84)](https://github.com/Fredrick0K/VoltApp/releases/download/v1.2.7/app-release.apk)
+[![Download](https://img.shields.io/github/v/release/Fredrick0K/VoltApp?label=Download&style=for-the-badge&color=1C30A3&logo=android&logoColor=#3DDC84)](https://github.com/Fredrick0K/VoltApp/releases/download/v1.2.8/app-release.apk)
 1. Download the app.
 2. Install.
 3. And start saving!
